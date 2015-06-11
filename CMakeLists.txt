@@ -1,0 +1,82 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+PROJECT(context)
+INCLUDE(GNUInstallDirs)
+
+# Targets
+SET(target "context")
+
+# Source Lists
+FILE(GLOB_RECURSE SRCS src/*.cpp)
+MESSAGE("Sources: ${SRCS}")
+
+# Dependencies
+SET(DEPS "aul bundle pkgmgr-info capi-security-privilege-manager capi-appfw-app-control context-common")
+
+# Dependencies regarding profiles
+IF("${PROFILE}" STREQUAL "mobile")
+	ADD_DEFINITIONS("-D_MOBILE")
+ENDIF("${PROFILE}" STREQUAL "mobile")
+
+IF("${PROFILE}" STREQUAL "wearable")
+	ADD_DEFINITIONS("-D_WEARABLE")
+ENDIF("${PROFILE}" STREQUAL "wearable")
+
+# Target vs Emulator
+IF("${ARCH}" STREQUAL "arm")
+	ADD_DEFINITIONS("-D_TARGET")
+ELSE("${ARCH}" STREQUAL "arm")
+	ADD_DEFINITIONS("-D_EMULATOR")
+ENDIF("${ARCH}" STREQUAL "arm")
+
+# Common Options
+INCLUDE(FindPkgConfig)
+INCLUDE_DIRECTORIES(
+	${CMAKE_SOURCE_DIR}/include
+)
+ADD_DEFINITIONS(-g -O2 -Wall -fPIC -fvisibility=hidden -Wl,--as-needed)
+
+# Building Library
+pkg_check_modules(api_pkg REQUIRED ${DEPS})
+
+FOREACH(flag ${api_pkg_CFLAGS})
+   SET(API_EXTRA_CFLAGS "${API_EXTRA_CFLAGS} ${flag}")
+ENDFOREACH(flag)
+
+ADD_LIBRARY(${target} SHARED ${SRCS})
+TARGET_LINK_LIBRARIES(${target} ${api_pkg_LDFLAGS})
+SET_TARGET_PROPERTIES(${target} PROPERTIES COMPILE_FLAGS ${API_EXTRA_CFLAGS})
+SET_TARGET_PROPERTIES(${target} PROPERTIES COMPILE_DEFINITIONS "LOG_TAG=\"CONTEXT-API\"")
+SET_TARGET_PROPERTIES(${target} PROPERTIES SOVERSION ${MAJORVER})
+SET_TARGET_PROPERTIES(${target} PROPERTIES VERSION ${FULLVER})
+
+# Installing
+INSTALL(TARGETS ${target} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries)
+INSTALL(
+	DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/context-service
+	FILES_MATCHING PATTERN "*.h"
+	PATTERN "*_internal.h" EXCLUDE
+)
+
+SET(VERSION ${FULLVER})
+SET(PREFIX ${CMAKE_INSTALL_PREFIX})
+SET(PC_NAME ${PROJECT_NAME})
+SET(PC_INCLUDE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/context-service")
+SET(PC_LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+SET(PC_DESCRIPTION "Tizen Context Framework Native API")
+SET(PC_REQUIRED ${DEPS})
+SET(PC_LDFLAGS -l${target})
+SET(PC_CFLAGS -I\${includedir}/context-service)
+
+CONFIGURE_FILE(
+	${PROJECT_NAME}.pc.in
+	${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.pc
+	@ONLY
+)
+INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+# Building internal test API
+ADD_SUBDIRECTORY(internal)
+
+#IF("${BINTYPE}" STREQUAL "engineer")	//TODO: Re-enabled later
+#	ADD_SUBDIRECTORY(test)
+#ENDIF("${BINTYPE}" STREQUAL "engineer")
