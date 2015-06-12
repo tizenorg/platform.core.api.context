@@ -2,7 +2,7 @@ Name:       context
 Summary:    Tizen Context Framework Native API
 Version:    0.4.2
 Release:    1
-Group:      Framework/system
+Group:      System/API
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 
@@ -70,7 +70,7 @@ cp LICENSE %{buildroot}/usr/share/license/%{name}
 
 %package devel
 Summary:    Tizen Context Framework Native API (Development)
-Group:      Framework/system
+Group:      System/API
 Requires:	%{name} = %{version}-%{release}
 
 %description devel
@@ -83,7 +83,7 @@ Tizen Context Framework Native API (Development)
 
 %package internal
 Summary:    Tizen Context Framework Internal Headers
-Group:      Framework/system
+Group:      System/API
 Requires:	%{name} = %{version}-%{release}
 
 %description internal
