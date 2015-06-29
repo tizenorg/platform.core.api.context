@@ -12,22 +12,6 @@ MESSAGE("Sources: ${SRCS}")
 # Dependencies
 SET(DEPS "aul bundle pkgmgr-info libsmack capi-appfw-app-control context-common")
 
-# Dependencies regarding profiles
-IF("${PROFILE}" STREQUAL "mobile")
-	ADD_DEFINITIONS("-D_MOBILE")
-ENDIF("${PROFILE}" STREQUAL "mobile")
-
-IF("${PROFILE}" STREQUAL "wearable")
-	ADD_DEFINITIONS("-D_WEARABLE")
-ENDIF("${PROFILE}" STREQUAL "wearable")
-
-# Target vs Emulator
-IF("${ARCH}" STREQUAL "arm")
-	ADD_DEFINITIONS("-D_TARGET")
-ELSE("${ARCH}" STREQUAL "arm")
-	ADD_DEFINITIONS("-D_EMULATOR")
-ENDIF("${ARCH}" STREQUAL "arm")
-
 # Common Options
 INCLUDE(FindPkgConfig)
 INCLUDE_DIRECTORIES(
