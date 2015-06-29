@@ -22,17 +22,17 @@
 namespace ctx {
 	namespace rule_validator {
 
-		bool check_option(ctx::json& item);
+		bool check_option(ctx::json &item);
 		bool check_option_int(std::string name, std::string key, int value);
 		bool check_option_string(std::string name, std::string key, std::string value);
-		bool check_option_reference(std::string event, ctx::json& item);
+		bool check_option_reference(std::string event, ctx::json &item);
 		bool check_comparison_int(std::string name, std::string key, std::string op, int value);
 		bool check_comparison_string(std::string name, std::string key, std::string op, std::string value);
 		bool check_valid_key(int type, std::string name, std::string key);
 
-		bool set_ref_info(int type, ctx::json* jref, std::string name, std::string key, std::string ref_key);
+		bool set_ref_info(int type, ctx::json *jref, std::string name, std::string key, std::string ref_key);
 		int get_data_type(int type, std::string name, std::string key);
-		bool check_referential_data(std::string name, ctx::json& ref_info);
+		bool check_referential_data(std::string name, ctx::json &ref_info);
 
 	}
 }	/* namespace ctx */

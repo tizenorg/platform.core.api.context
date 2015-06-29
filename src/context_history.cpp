@@ -22,6 +22,7 @@
 
 #define TYPE_INT 0
 #define TYPE_STRING 1
+#define FILTER_KEY_LIMIT 10
 
 #define GROUP_COMMON 0
 #define GROUP1 1
@@ -57,7 +58,6 @@ typedef struct _context_history_record_handle_s {
 
 static std::string convert_filter_to_string(context_history_filter_e filter_type);
 static std::string convert_data_to_string(context_history_data_e data_type);
-static std::string convert_event_to_string(context_history_event_e event_type);
 static bool check_record_key_data_type(int type, std::string key);
 static bool check_filter_data_int(context_history_filter_e filter_type, int val);
 static bool check_filter_data_string(context_history_filter_e filter_type, const char* val);
@@ -231,17 +231,6 @@ EXTAPI int context_history_list_destroy(context_history_list_h list)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-// Log data manipulation
-EXTAPI int context_history_record_create(context_history_record_h* record)
-{
-	ASSERT_NOT_NULL(record);
-
-	*record = new(std::nothrow) _cx_history_record_handle();
-	ASSERT_ALLOC(*record);
-
-	return CONTEXT_HISTORY_ERROR_NONE;
-}
-
 EXTAPI int context_history_record_get_int(context_history_record_h record, const char* key, int* val)
 {
 	ASSERT_NOT_NULL(record && val && key);
@@ -280,47 +269,12 @@ EXTAPI int context_history_record_get_string(context_history_record_h record, co
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_record_set_int(context_history_record_h record, const char* key, int val)
-{
-	ASSERT_NOT_NULL(record && key);
-
-	record->jrecord.set(NULL, key, val);
-
-	return CONTEXT_HISTORY_ERROR_NONE;
-}
-
-EXTAPI int context_history_record_set_string(context_history_record_h record, const char* key, const char* val)
-{
-	ASSERT_NOT_NULL(record && val && key);
-
-	record->jrecord.set(NULL, key, val);
-
-	return CONTEXT_HISTORY_ERROR_NONE;
-}
-
 EXTAPI int context_history_record_destroy(context_history_record_h record)
 {
 	ASSERT_NOT_NULL(record);
 	delete record;
 
 	return CONTEXT_HISTORY_ERROR_NONE;
-}
-
-// Write
-EXTAPI int context_history_record_insert(context_history_record_h record, context_history_event_e event_type)
-{
-	ASSERT_NOT_NULL(record);
-	IF_FAIL_RETURN(event_type > 0, CONTEXT_HISTORY_ERROR_INVALID_PARAMETER);
-
-	std::string event_type_str = convert_event_to_string(event_type);
-	if (event_type_str.empty()) {
-		return CONTEXT_HISTORY_ERROR_INVALID_PARAMETER;
-	}
-
-	record->jrecord.set(NULL, COMMON_ATTR_CLIENT_APP_ID, "");
-	int error = ctx::request_handler::write(event_type_str.c_str(), &record->jrecord);
-
-	return error;
 }
 
 std::string convert_filter_to_string(context_history_filter_e filter_type)
@@ -400,28 +354,6 @@ std::string convert_data_to_string(context_history_data_e data_type)
 	return str;
 }
 
-std::string convert_event_to_string(context_history_event_e event_type)
-{
-	std::string str;
-	switch (event_type) {
-	case CONTEXT_HISTORY_START_MUSIC:
-		str = CONTEXT_HISTORY_EVENT_START_MUSIC;
-		break;
-	case CONTEXT_HISTORY_STOP_MUSIC:
-		str = CONTEXT_HISTORY_EVENT_STOP_MUSIC;
-		break;
-	case CONTEXT_HISTORY_START_VIDEO:
-		str = CONTEXT_HISTORY_EVENT_START_VIDEO;
-		break;
-	case CONTEXT_HISTORY_STOP_VIDEO:
-		str = CONTEXT_HISTORY_EVENT_STOP_VIDEO;
-		break;
-	default:
-		break;
-	}
-	return str;
-}
-
 bool check_record_key_data_type(int type, std::string key)
 {
 	if ((key.compare(CONTEXT_HISTORY_APP_ID) == 0) ||
@@ -477,62 +409,75 @@ bool check_filter_data_int(context_history_filter_e filter_type, int val)
 
 bool check_filter_data_string(context_history_filter_e filter_type, const char* val)
 {
+	IF_FAIL_RETURN(val, false);
+
 	switch (filter_type) {
 	case CONTEXT_HISTORY_FILTER_APP_ID:
 	case CONTEXT_HISTORY_FILTER_WIFI_BSSID:
-		if (val)
-			return true;
-		break;
+		return true;
+
 	default:
 		return false;
 	}
-	return false;
 }
 
 bool check_invalid_filter(context_history_data_e data_type, context_history_filter_h filter)
 {
-	static const char* group_common[] = {CONTEXT_HISTORY_FILTER_KEY_TIME_SPAN, NULL};
-	static const char* group1[] = {CONTEXT_HISTORY_FILTER_KEY_RESULT_SIZE, CONTEXT_HISTORY_FILTER_KEY_START_TIME,
-									CONTEXT_HISTORY_FILTER_KEY_END_TIME, CONTEXT_HISTORY_FILTER_KEY_WIFI_BSSID,
-									CONTEXT_HISTORY_FILTER_KEY_AUDIO_JACK, NULL};
-	static const char* group2[] = {CONTEXT_HISTORY_FILTER_KEY_RESULT_SIZE, CONTEXT_HISTORY_FILTER_KEY_START_TIME,
-									CONTEXT_HISTORY_FILTER_KEY_END_TIME, NULL};
-	static const char* group3[] = {CONTEXT_HISTORY_FILTER_KEY_RESULT_SIZE, CONTEXT_HISTORY_FILTER_KEY_START_TIME,
-									CONTEXT_HISTORY_FILTER_KEY_END_TIME, CONTEXT_HISTORY_FILTER_KEY_APP_ID,
-									CONTEXT_HISTORY_FILTER_KEY_DAY_OF_WEEK, NULL};
-	static const char* group4[] = {CONTEXT_HISTORY_FILTER_KEY_START_TIME, CONTEXT_HISTORY_FILTER_KEY_END_TIME,
-									CONTEXT_HISTORY_FILTER_KEY_APP_ID, NULL};
-	static const char* group5[] = {CONTEXT_HISTORY_FILTER_KEY_RESULT_SIZE, CONTEXT_HISTORY_FILTER_KEY_START_TIME,
-									CONTEXT_HISTORY_FILTER_KEY_END_TIME, CONTEXT_HISTORY_FILTER_KEY_COMMUNICATION_TYPE, NULL};
-	static const char** const filter_arr[] = {group_common, group1, group2, group3, group4, group5};
+	/* This should be aligned with context_history_filter_e */
+	static const char *filter_key[FILTER_KEY_LIMIT] = {
+		NULL,
+		CONTEXT_HISTORY_FILTER_KEY_TIME_SPAN,
+		CONTEXT_HISTORY_FILTER_KEY_RESULT_SIZE,
+		CONTEXT_HISTORY_FILTER_KEY_APP_ID,
+		CONTEXT_HISTORY_FILTER_KEY_DAY_OF_WEEK,
+		CONTEXT_HISTORY_FILTER_KEY_START_TIME,
+		CONTEXT_HISTORY_FILTER_KEY_END_TIME,
+		CONTEXT_HISTORY_FILTER_KEY_WIFI_BSSID,
+		CONTEXT_HISTORY_FILTER_KEY_AUDIO_JACK,
+		CONTEXT_HISTORY_FILTER_KEY_COMMUNICATION_TYPE,
+	};
 
-	int group;
+	bool allowed[FILTER_KEY_LIMIT] = {false};
+
+	allowed[CONTEXT_HISTORY_FILTER_TIME_SPAN] = true;
+	allowed[CONTEXT_HISTORY_FILTER_START_TIME] = true;
+	allowed[CONTEXT_HISTORY_FILTER_END_TIME] = true;
+	allowed[CONTEXT_HISTORY_FILTER_RESULT_SIZE] = true;
+
 	switch (data_type) {
-	// Group1
 	case CONTEXT_HISTORY_RECENTLY_USED_APP:
 	case CONTEXT_HISTORY_FREQUENTLY_USED_APP:
-		group = GROUP1;
+		allowed[CONTEXT_HISTORY_FILTER_WIFI_BSSID] = true;
+		allowed[CONTEXT_HISTORY_FILTER_AUDIO_JACK] = true;
 		break;
-	// Group2
+
 	case CONTEXT_HISTORY_RARELY_USED_APP:
-		group = GROUP2;
 		break;
-	// Group3
+
 	case CONTEXT_HISTORY_PEAK_TIME_FOR_APP:
+		allowed[CONTEXT_HISTORY_FILTER_APP_ID] = true;
+		allowed[CONTEXT_HISTORY_FILTER_DAY_OF_WEEK] = true;
+		break;
+
 	case CONTEXT_HISTORY_PEAK_TIME_FOR_MUSIC:
 	case CONTEXT_HISTORY_PEAK_TIME_FOR_VIDEO:
-		group = GROUP3;
+		allowed[CONTEXT_HISTORY_FILTER_DAY_OF_WEEK] = true;
 		break;
-	// Group4
+
 	case CONTEXT_HISTORY_COMMON_SETTING_FOR_APP:
+		allowed[CONTEXT_HISTORY_FILTER_RESULT_SIZE] = false;
+		allowed[CONTEXT_HISTORY_FILTER_APP_ID] = true;
+		break;
+
 	case CONTEXT_HISTORY_COMMON_SETTING_FOR_MUSIC:
 	case CONTEXT_HISTORY_COMMON_SETTING_FOR_VIDEO:
-		group = GROUP4;
+		allowed[CONTEXT_HISTORY_FILTER_RESULT_SIZE] = false;
 		break;
-	// Group5
+
 	case CONTEXT_HISTORY_FREQUENTLY_COMMUNICATED_ADDRESS:
-		group = GROUP5;
+		allowed[CONTEXT_HISTORY_FILTER_COMMUNICATION_TYPE] = true;
 		break;
+
 	default:
 		return false;
 	}
@@ -544,26 +489,17 @@ bool check_invalid_filter(context_history_data_e data_type, context_history_filt
 	for (std::list<std::string>::iterator it = keys.begin(); it != keys.end(); ++it) {
 		std::string key = (*it);
 		found = false;
-		for (int i = 0; filter_arr[GROUP_COMMON][i] != NULL; i++) {
-			if (key.compare(filter_arr[GROUP_COMMON][i]) == 0) {
+		for (int i = 1; i < FILTER_KEY_LIMIT; ++i) {
+			if (allowed[i] && key == filter_key[i]) {
 				found = true;
 				break;
 			}
 		}
-		if (found == true) {
+		if (found == true)
 			continue;
-		}
 
-		for (int i = 0; filter_arr[group][i] != NULL; i++) {
-			if (key.compare(filter_arr[group][i]) == 0) {
-				found = true;
-				break;
-			}
-		}
-		if (found == false) {
-			break;
-		}
+		return false;
 	}
 
-	return found;
+	return true;
 }

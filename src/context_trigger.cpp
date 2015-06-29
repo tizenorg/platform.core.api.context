@@ -352,11 +352,11 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 	int error;
 
 	// Privilege check
-	error = ctx::privilege_util::is_allowed("http://tizen.org/privilege/appmanager.launch");
+	error = ctx::privilege_util::is_allowed("appmanager.launch");
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 
 	if (is_call_operation(app_control)) {
-		error = ctx::privilege_util::is_allowed("http://tizen.org/privilege/call");
+		error = ctx::privilege_util::is_allowed("call");
 		IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 	}
 
@@ -392,7 +392,7 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 	ASSERT_NOT_NULL(rule && title && content);
 
 	// Privilege check
-	int error = ctx::privilege_util::is_allowed("http://tizen.org/privilege/notification");
+	int error = ctx::privilege_util::is_allowed("notification");
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 
 	// if action arleady exists

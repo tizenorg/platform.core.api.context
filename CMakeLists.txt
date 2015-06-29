@@ -10,7 +10,7 @@ FILE(GLOB_RECURSE SRCS src/*.cpp)
 MESSAGE("Sources: ${SRCS}")
 
 # Dependencies
-SET(DEPS "aul bundle pkgmgr-info capi-security-privilege-manager capi-appfw-app-control context-common")
+SET(DEPS "aul bundle pkgmgr-info libsmack capi-appfw-app-control context-common")
 
 # Dependencies regarding profiles
 IF("${PROFILE}" STREQUAL "mobile")
@@ -54,7 +54,6 @@ INSTALL(TARGETS ${target} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeL
 INSTALL(
 	DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/context-service
 	FILES_MATCHING PATTERN "*.h"
-	PATTERN "*_internal.h" EXCLUDE
 )
 
 SET(VERSION ${FULLVER})
@@ -73,10 +72,3 @@ CONFIGURE_FILE(
 	@ONLY
 )
 INSTALL(FILES ${CMAKE_SOURCE_DIR}/${PROJECT_NAME}.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
-# Building internal test API
-ADD_SUBDIRECTORY(internal)
-
-#IF("${BINTYPE}" STREQUAL "engineer")	//TODO: Re-enabled later
-#	ADD_SUBDIRECTORY(test)
-#ENDIF("${BINTYPE}" STREQUAL "engineer")

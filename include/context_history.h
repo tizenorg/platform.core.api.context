@@ -22,7 +22,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 /**
  * @addtogroup CAPI_CONTEXT_HISTORY_MODULE
@@ -105,18 +105,6 @@ typedef enum {
 	CONTEXT_HISTORY_COMMON_SETTING_FOR_VIDEO,		/**< Common setting value of video watching activity.@n Privilege : http://tizen.org/privilege/mediahistory.read*/
 	CONTEXT_HISTORY_FREQUENTLY_COMMUNICATED_ADDRESS		/**< Frequently communicated address.@n Privilege : http://tizen.org/privilege/callhistory.read*/
 } context_history_data_e;
-
-/**
- * @platform
- * @brief		Enumeration for event types for logging.
- * @since_tizen 2.4
- */
-typedef enum {
-	CONTEXT_HISTORY_START_MUSIC = 1,	/**< @platform Start music event.@n Privilege : http://tizen.org/privilege/mediahistory.admin*/
-	CONTEXT_HISTORY_STOP_MUSIC,		/**< @platform Stop music event.@n Privilege : http://tizen.org/privilege/mediahistory.admin*/
-	CONTEXT_HISTORY_START_VIDEO,	/**< @platform Start video event.@n Privilege : http://tizen.org/privilege/mediahistory.admin*/
-	CONTEXT_HISTORY_STOP_VIDEO		/**< @platform Stop video event.@n Privilege : http://tizen.org/privilege/mediahistory.admin*/
-} context_history_event_e;
 
 /**
  * @brief		Enumeration for filters of statistics and patterns.
@@ -402,28 +390,6 @@ int context_history_list_move_next(context_history_list_h list);
 int context_history_list_destroy(context_history_list_h list);
 
 /**
- * @platform
- * @brief		Creates a record handle.
- * @since_tizen 2.4
- * @remarks		The @c record must be released using context_history_record_destroy().
- *
- * @param[out]	record		The record handle
- *
- * @return		0 on success, otherwise a negative error value
- * @retval		#CONTEXT_HISTORY_ERROR_NONE					Successful
- * @retval		#CONTEXT_HISTORY_ERROR_INVALID_PARAMETER	Invalid parameter
- * @retval		#CONTEXT_HISTORY_ERROR_OPERATION_FAILED		Operation failed
- * @retval		#CONTEXT_HISTORY_ERROR_OUT_OF_MEMORY			Out of memory
- *
- * @post	context_history_record_destroy()
- * @see		context_history_record_get_int()
- * @see		context_history_record_get_string()
- * @see		context_history_record_set_int()
- * @see		context_history_record_set_string()
- */
-int context_history_record_create(context_history_record_h* record);
-
-/**
  * @brief		Gets an integer value from a record.
  * @since_tizen 2.4
  *
@@ -459,42 +425,6 @@ int context_history_record_get_int(context_history_record_h record,  const char*
 int context_history_record_get_string(context_history_record_h record, const char* key, char** value);
 
 /**
- * @platform
- * @brief		Sets an integer value to the record.
- * @since_tizen 2.4
- *
- * @param[in]	record		The record handle
- * @param[in]	key			The key of attribute to set
- * @param[in]	value		The value to be set
- *
- * @return		0 on success, otherwise a negative error value
- * @retval		#CONTEXT_HISTORY_ERROR_NONE					Successful
- * @retval		#CONTEXT_HISTORY_ERROR_INVALID_PARAMETER	Invalid parameter
- *
- * @pre		context_history_record_create()
- * @see		context_history_record_set_string()
- */
-int context_history_record_set_int(context_history_record_h record, const char* key, int value);
-
-/**
- * @platform
- * @brief		Sets a string to the record.
- * @since_tizen 2.4
- *
- * @param[in]	record		The record handle
- * @param[in]	key			The key of attribute to set
- * @param[in]	value		The value to be set
- *
- * @return		0 on success, otherwise a negative error value
- * @retval		#CONTEXT_HISTORY_ERROR_NONE					Successful
- * @retval		#CONTEXT_HISTORY_ERROR_INVALID_PARAMETER	Invalid parameter
- *
- * @pre		context_history_record_create()
- * @see		context_history_record_set_int()
- */
-int context_history_record_set_string(context_history_record_h record, const char* key, const char* value);
-
-/**
  * @brief		Destroys a record handle and releases all its resources.
  * @since_tizen 2.4
  *
@@ -508,36 +438,12 @@ int context_history_record_set_string(context_history_record_h record, const cha
  */
 int context_history_record_destroy(context_history_record_h record);
 
-/**
- * @platform
- * @brief		Inserts a history event log.
- * @since_tizen 2.4
- *
- * @privlevel platform
- * @privilege %http://tizen.org/privilege/mediahistory.admin
- *
- * @remarks		Some mandatory attributes have to be set to record. Mandatory fields are described in overview.
- *
- * @param[in]	event_type	The history event type
- * @param[in]	record		The record to be inserted
- *
- * @return		0 on success, otherwise a negative error value
- * @retval		#CONTEXT_HISTORY_ERROR_NONE					Successful
- * @retval		#CONTEXT_HISTORY_ERROR_INVALID_PARAMETER		Invalid parameter
- * @retval		#CONTEXT_HISTORY_ERROR_OPERATION_FAILED		Operation failed
- * @retval		#CONTEXT_HISTORY_ERROR_OUT_OF_MEMORY			Out of memory
- *
- * @pre		context_history_record_create()
- * @post	context_history_record_destroy()
- */
-int context_history_record_insert(context_history_record_h record, context_history_event_e event_type);
-
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 /**
 * @}
 */
 
-#endif // __TIZEN_CONTEXT_HISTORY_H__
+#endif /* __TIZEN_CONTEXT_HISTORY_H__ */

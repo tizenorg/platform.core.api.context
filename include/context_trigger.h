@@ -28,7 +28,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 /**
  * @brief	The operator "is equal to".
@@ -91,9 +91,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "time of day".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_int().@n
- *			When being used with #CONTEXT_TRIGGER_EVENT_ON_TIME, it's unit is "hour",
- *			the valid range of the corresponding right operands is thus from 0 (12:00 AM) to 23 (11:00 PM).@n
- *			When being used with #CONTEXT_TRIGGER_CONDITION_TIME_OF_DAY, it's unit is "minute",
+ *			When being used with #CONTEXT_TRIGGER_EVENT_TIME or #CONTEXT_TRIGGER_CONDITION_TIME, it's unit is "minute",
  *			the valid range of the corresponding right operands is thus from 0 (12:00 AM) to 1439 (11:59 PM).
  * @since_tizen 2.4
  */
@@ -147,7 +145,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "level".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands values.
+ *			See the programming guide to find available right operands values.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_LEVEL "Level"
@@ -155,7 +153,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "state".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_STATE "State"
@@ -163,7 +161,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "BSSID".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_BSSID "BSSID"
@@ -171,7 +169,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "type".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_TYPE "Type"
@@ -179,7 +177,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "event".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_EVENT "Event"
@@ -187,7 +185,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "accuracy".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_ACCURACY "Accuracy"
@@ -195,7 +193,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "medium".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_MEDIUM "Medium"
@@ -203,7 +201,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "place id".
  * @details	This can be used as a key of context_trigger_rule_entry_add_option_int().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find the corresponding trigger events.
+ *			See the programming guide to find the corresponding trigger events.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_PLACE_ID "PlaceId"
@@ -211,7 +209,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "application id".
  * @details	This can be used as a key of context_trigger_rule_entry_add_option_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find the corresponding trigger events.
+ *			See the programming guide to find the corresponding trigger events.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_APP_ID "AppId"
@@ -220,7 +218,7 @@ extern "C" {
  * @brief	The attribute key denoting "address".
  * @details	This can be used as a key of context_trigger_rule_entry_add_option_string(),
  *			or context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT and CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find the corresponding items.
+ *			See the programming guide and CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find the corresponding items.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_ADDRESS "Address"
@@ -228,7 +226,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "rank".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_int().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_RANK "Rank"
@@ -236,7 +234,7 @@ extern "C" {
 /**
  * @brief	The attribute key denoting "total count".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_int().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available right operands.
+ *			See the programming guide to find available right operands.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_TOTAL_COUNT "TotalCount"
@@ -244,7 +242,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Monday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_MON "Mon"
@@ -252,7 +250,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Tuesday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_TUE "Tue"
@@ -260,7 +258,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Wednesday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_WED "Wed"
@@ -268,7 +266,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Thursday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_THU "Thu"
@@ -276,7 +274,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Friday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_FRI "Fri"
@@ -284,7 +282,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Saturday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SAT "Sat"
@@ -292,7 +290,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Sunday.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SUN "Sun"
@@ -300,7 +298,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Weekdays.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_WEEKDAY "Weekday"
@@ -308,7 +306,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting Weekends.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_WEEKEND "Weekend"
@@ -316,7 +314,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "empty" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_EMPTY "Empty"
@@ -324,7 +322,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "critical" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_CRITICAL "Critical"
@@ -332,7 +330,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "low" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_LOW "Low"
@@ -340,7 +338,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "normal" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_NORMAL "Normal"
@@ -348,7 +346,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "high" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_HIGH "High"
@@ -356,7 +354,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "full" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_FULL "Full"
@@ -364,7 +362,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "disabled" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_DISABLED "Disabled"
@@ -372,7 +370,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "searching" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SEARCHING "Searching"
@@ -380,7 +378,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "connecting" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_CONNECTING "Connecting"
@@ -388,7 +386,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "connected" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_CONNECTED "Connected"
@@ -396,7 +394,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "unconnected" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_UNCONNECTED "Unconnected"
@@ -404,7 +402,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "idle" state.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_IDLE "Idle"
@@ -412,7 +410,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "voice" type.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_VOICE "Voice"
@@ -420,7 +418,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "video" type.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_VIDEO "Video"
@@ -428,7 +426,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "headset" type.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_HEADSET "Headset"
@@ -436,7 +434,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "bluetooth" type.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_BLUETOOTH "Bluetooth"
@@ -444,7 +442,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "received" event.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_RECEIVED "Received"
@@ -452,7 +450,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "sent" event.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SENT "Sent"
@@ -460,7 +458,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "SMS" type.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SMS "SMS"
@@ -468,7 +466,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "MMS" type.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_MMS "MMS"
@@ -476,7 +474,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "detected" event.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_DETECTED "Detected"
@@ -484,7 +482,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "in" event.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_IN "In"
@@ -492,7 +490,7 @@ extern "C" {
 /**
  * @brief	The attribute value denoting the "out" event.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find the corresponding left operand attribute keys.
+ *			See the programming guide to find the corresponding left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_OUT "Out"
@@ -928,7 +926,7 @@ int context_trigger_rule_entry_destroy(context_trigger_rule_entry_h entry);
 
 /**
  * @brief		Sets an integer type option to an event or condition entry.
- * @details		See \ref CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find available option keys for each event/condition item.
+ * @details		See the programming guide to find available option keys for each event/condition item.
  * @since_tizen 2.4
  *
  * @param[in]	entry			The event or condition entry
@@ -945,7 +943,7 @@ int context_trigger_rule_entry_add_option_int(context_trigger_rule_entry_h entry
 
 /**
  * @brief		Sets a string type option to an event or condition entry.
- * @details		See \ref CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find available option keys for each event/condition item.
+ * @details		See the programming guide to find available option keys for each event/condition item.
  * @since_tizen 2.4
  *
  * @param[in]	entry			The event or condition entry
@@ -962,7 +960,7 @@ int context_trigger_rule_entry_add_option_string(context_trigger_rule_entry_h en
 
 /**
  * @brief		Sets an option to a condition entry, which references an attribute that will be extracted from the event.
- * @details		See \ref CAPI_CONTEXT_TRIGGER_MODULE_OPTION_FORMAT to find available option keys for each condition item.
+ * @details		See the programming guide to find available option keys for each condition item.
  * @since_tizen 2.4
  *
  * @param[in]	entry			The condition entry
@@ -980,7 +978,7 @@ int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h entry, co
 /**
  * @brief		Adds an attribute key to an entry.
  * @details		The key will be used as the left operand of comparisons.
- *				See \ref CAPI_CONTEXT_TRIGGER_MODULE_DATA_FORMAT to find available attribute keys for each event/condition item.
+ *				See the programming guide to find available attribute keys for each event/condition item.
  * @since_tizen 2.4
  *
  * @param[in]	entry			The event or condition entry
@@ -1056,10 +1054,10 @@ int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 /**
 * @}
 */
 
-#endif // __TIZEN_CONTEXT_CONTEXT_TRIGGER_H__
+#endif /* __TIZEN_CONTEXT_CONTEXT_TRIGGER_H__ */

@@ -11,7 +11,7 @@ BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
 BuildRequires: pkgconfig(pkgmgr-info)
-BuildRequires: pkgconfig(capi-security-privilege-manager)
+BuildRequires: pkgconfig(libsmack)
 BuildRequires: pkgconfig(context-common)
 
 %ifarch %{arm}
@@ -80,16 +80,3 @@ Tizen Context Framework Native API (Development)
 %defattr(-,root,root,-)
 %{_includedir}/context-service/*.h
 %{_libdir}/pkgconfig/%{name}.pc
-
-%package internal
-Summary:    Tizen Context Framework Internal Headers
-Group:      System/API
-Requires:	%{name} = %{version}-%{release}
-
-%description internal
-Tizen Context Framework Internal Headers
-
-%files internal
-%defattr(-,root,root,-)
-%{_includedir}/context-service/internal/*.h
-%{_libdir}/pkgconfig/context-internal.pc

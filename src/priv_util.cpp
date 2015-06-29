@@ -14,46 +14,30 @@
  * limitations under the License.
  */
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <aul.h>
-#include <pkgmgr-info.h>
-#include <privilege_checker.h>
-
+#include <glib.h>
+#include <sys/smack.h>
+#include <string>
 #include <types_internal.h>
 #include "priv_util.h"
 
 int ctx::privilege_util::is_allowed(const char* priv)
 {
-	int error;
-	char app_id[256];
-	error = aul_app_get_appid_bypid(getpid(), app_id, sizeof(app_id));
-	IF_FAIL_RETURN_TAG(error == AUL_R_OK, ERR_OPERATION_FAILED, _E, "Getting AppId failed");
+	IF_FAIL_RETURN_TAG(priv, ERR_OPERATION_FAILED, _E, "Invalid parameter");
 
-	pkgmgrinfo_appinfo_h app_info;
-	error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
-	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, ERR_OPERATION_FAILED, _E, "Failed to get app_info");
+	char *subject = NULL;
+	int ret = smack_new_label_from_self(&subject);
+	IF_FAIL_RETURN_TAG(ret == 0 && subject != NULL, ERR_OPERATION_FAILED, _E, "Getting smack label failed");
 
-	char *pkg_name = NULL;
-	error = pkgmgrinfo_appinfo_get_pkgname(app_info, &pkg_name);
-	if (error != PMINFO_R_OK || pkg_name == NULL) {
-		pkgmgrinfo_appinfo_destroy_appinfo(app_info);
-		_E("Failed to get package name");
-		return ERR_OPERATION_FAILED;
-	}
+	std::string priv_name = "privilege::tizen::";
+	priv_name += priv;
+	ret = smack_have_access(subject, priv_name.c_str(), "rw");
+	g_free(subject);
 
-	error = privilege_checker_check_package_privilege(pkg_name, priv);
-	pkgmgrinfo_appinfo_destroy_appinfo(app_info);
-
-	_D("Privilege checking result: %d", error);
-
-	if (error == PRIV_CHECKER_ERR_NONE) {
+	if (ret == 1)
 		return ERR_NONE;
-	}
 
-	if (error == PRIV_CHECKER_ERR_INVALID_PRIVILEGE) {
+	if (ret == 0)
 		return ERR_PERMISSION_DENIED;
-	}
 
 	return ERR_OPERATION_FAILED;
 }
