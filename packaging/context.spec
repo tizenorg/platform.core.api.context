@@ -11,7 +11,6 @@ BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
 BuildRequires: pkgconfig(pkgmgr-info)
-BuildRequires: pkgconfig(libsmack)
 BuildRequires: pkgconfig(context-common)
 
 %description

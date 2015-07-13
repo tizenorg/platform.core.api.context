@@ -15,13 +15,14 @@
  */
 
 #include <glib.h>
-#include <sys/smack.h>
 #include <string>
 #include <types_internal.h>
 #include "priv_util.h"
 
 int ctx::privilege_util::is_allowed(const char* priv)
 {
+	/* TODO: Re-implement using Cynara */
+#if 0
 	IF_FAIL_RETURN_TAG(priv, ERR_OPERATION_FAILED, _E, "Invalid parameter");
 
 	char *subject = NULL;
@@ -40,4 +41,6 @@ int ctx::privilege_util::is_allowed(const char* priv)
 		return ERR_PERMISSION_DENIED;
 
 	return ERR_OPERATION_FAILED;
+#endif
+	return ERR_NONE;
 }
