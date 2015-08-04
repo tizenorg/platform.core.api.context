@@ -22,6 +22,7 @@
 #include <bundle.h>
 #include <bundle_internal.h>
 #include <context_trigger.h>
+#include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
 #include <request_handler.h>
 #include "rule_validator.h"
@@ -430,6 +431,29 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
+
+#if 0
+EXTAPI int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h rule,
+		const char *bus_name, const char *object_path, const char *interface_name, const char *method_name, const char *user_data)
+{
+	ASSERT_NOT_NULL(rule && bus_name && object_path && interface_name && method_name);
+
+	// if action arleady exists
+	std::string type;
+	if ((rule->jrule).get(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type))
+		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
+
+	// Set D-Bus info
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, CT_RULE_ACTION_TYPE_DBUS_CALL);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_DBUS_NAME, bus_name);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_DBUS_OBJECT, object_path);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_DBUS_INTERFACE, interface_name);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_DBUS_METHOD, method_name);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_DBUS_USER_DATA, (user_data ? user_data : ""));
+
+	return CONTEXT_TRIGGER_ERROR_NONE;
+}
+#endif
 
 // Set description
 EXTAPI int context_trigger_rule_set_description(context_trigger_rule_h rule, const char* description)

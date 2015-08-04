@@ -1,6 +1,6 @@
 Name:       context
 Summary:    Tizen Context Framework Native API
-Version:    0.5.3
+Version:    0.5.5
 Release:    1
 Group:      System/API
 License:    Apache-2.0
@@ -10,7 +10,6 @@ BuildRequires: cmake
 BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
-BuildRequires: pkgconfig(pkgmgr-info)
 BuildRequires: pkgconfig(context-common)
 
 %description

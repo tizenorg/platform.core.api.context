@@ -10,7 +10,7 @@ FILE(GLOB_RECURSE SRCS src/*.cpp)
 MESSAGE("Sources: ${SRCS}")
 
 # Dependencies
-SET(DEPS "aul bundle pkgmgr-info capi-appfw-app-control context-common")
+SET(DEPS "aul bundle capi-appfw-app-control context-common")
 
 # Common Options
 INCLUDE(FindPkgConfig)
@@ -37,7 +37,9 @@ SET_TARGET_PROPERTIES(${target} PROPERTIES VERSION ${FULLVER})
 INSTALL(TARGETS ${target} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries)
 INSTALL(
 	DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/context-service
-	FILES_MATCHING PATTERN "*.h"
+	FILES_MATCHING
+	PATTERN "context_trigger_internal.h" EXCLUDE
+	PATTERN "*.h"
 )
 
 SET(VERSION ${FULLVER})
