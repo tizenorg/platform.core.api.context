@@ -19,103 +19,91 @@
 
 #define RULE_INFO "{ \"templates\": [\
 		{\
-			\"name\": \"timer/event\",\
+			\"name\": \"time/alarm\",\
 			\"attributes\": [ { \"key\": \"TimeOfDay\", \"type\": 1, \"min\": 0, \"max\": 1439}, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] } ]\
 		},\
 		{\
-			\"name\": \"timer/state\",\
+			\"name\": \"time/now\",\
 			\"attributes\": [ { \"key\": \"TimeOfDay\", \"type\": 1, \"min\": 0, \"max\": 1439}, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] }, { \"key\" : \"DayOfMonth\", \"type\": 1, \"min\": 1, \"max\": 31} ]\
 		},\
 		{\
-			\"name\": \"system/state/battery\",\
+			\"name\": \"system/battery\",\
 			\"attributes\": [ { \"key\" : \"Level\", \"type\": 2, \"acceptable\": [ \"Empty\", \"Critical\", \"Low\", \"Normal\", \"High\", \"Full\" ] }, { \"key\": \"IsCharging\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
 		},\
 		{\
-			\"name\": \"system/state/charger\",\
+			\"name\": \"system/charger\",\
 			\"attributes\": [ { \"key\": \"IsConnected\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
 		},\
 		{\
-			\"name\": \"system/state/flight_mode\",\
-			\"attributes\": [ { \"key\": \"IsEnabled\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
-		},\
-		{\
-			\"name\": \"system/state/gps\",\
+			\"name\": \"system/gps\",\
 			\"attributes\": [ { \"key\" : \"State\", \"type\": 2, \"acceptable\": [ \"Disabled\", \"Searching\", \"Connected\" ] } ]\
 		},\
 		{\
-			\"name\": \"system/state/headphone\",\
+			\"name\": \"system/headphone\",\
 			\"attributes\": [{ \"key\": \"IsConnected\", \"type\": 1, \"min\": 0, \"max\": 1 }, { \"key\": \"Type\", \"type\": 2, \"acceptable\": [ \"Normal\", \"Headset\", \"Bluetooth\" ] } ]\
 		},\
 		{\
-			\"name\": \"system/state/ps_mode\",\
+			\"name\": \"system/psmode\",\
 			\"attributes\": [ { \"key\": \"IsEnabled\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
 		},\
 		{\
-			\"name\": \"system/state/silent_mode\",\
-			\"attributes\": [ { \"key\": \"IsEnabled\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
-		},\
-		{\
-			\"name\": \"system/state/vibration_mode\",\
-			\"attributes\": [ { \"key\": \"IsEnabled\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
-		},\
-		{\
-			\"name\": \"system/state/usb\",\
+			\"name\": \"system/usb\",\
 			\"attributes\": [ { \"key\": \"IsConnected\", \"type\": 1, \"min\": 0, \"max\": 1 } ]\
 		},\
 		{\
-			\"name\": \"system/state/wifi\",\
+			\"name\": \"system/wifi\",\
 			\"attributes\": [ { \"key\" : \"State\", \"type\": 2, \"acceptable\": [ \"Disabled\", \"Unconnected\", \"Connected\" ] }, { \"key\": \"BSSID\", \"type\": 2, \"acceptable\": [ ] } ]\
 		},\
 		{\
-			\"name\": \"social/state/call\",\
+			\"name\": \"social/call\",\
 			\"attributes\": [ { \"key\" : \"Medium\", \"type\": 2, \"acceptable\": [ \"Voice\", \"Video\" ] }, { \"key\" : \"State\", \"type\": 2, \"acceptable\": [ \"Idle\", \"Connecting\", \"Connected\" ] }, { \"key\": \"Address\", \"type\": 2, \"acceptable\": [ ] } ]\
 		},\
 		{\
-			\"name\": \"social/event/email\",\
+			\"name\": \"social/email\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"Received\", \"Sent\" ] } ]\
 		},\
 		{\
-			\"name\": \"social/event/message\",\
+			\"name\": \"social/message\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"Received\" ] } , { \"key\": \"Type\", \"type\": 2, \"acceptable\": [ \"SMS\", \"MMS\" ] }, { \"key\": \"Address\", \"type\": 2, \"acceptable\": [ ] } ]\
 		},\
 		{\
-			\"name\": \"activity/event/stationary\",\
+			\"name\": \"activity/stationary\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"Detected\" ] }, { \"key\": \"Accuracy\", \"type\": 2, \"acceptable\": [ \"High\", \"Normal\", \"Low\" ] } ]\
 		},\
 		{\
-			\"name\": \"activity/event/walking\",\
+			\"name\": \"activity/walking\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"Detected\" ] }, { \"key\": \"Accuracy\", \"type\": 2, \"acceptable\": [ \"High\", \"Normal\", \"Low\" ] } ]\
 		},\
 		{\
-			\"name\": \"activity/event/running\",\
+			\"name\": \"activity/running\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"Detected\" ] }, { \"key\": \"Accuracy\", \"type\": 2, \"acceptable\": [ \"High\", \"Normal\", \"Low\" ] } ]\
 		},\
 		{\
-			\"name\": \"activity/event/in_vehicle\",\
+			\"name\": \"activity/in_vehicle\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"Detected\" ] }, { \"key\": \"Accuracy\", \"type\": 2, \"acceptable\": [ \"High\", \"Normal\", \"Low\" ] } ]\
 		},\
 		{\
-			\"name\": \"place/event/geofence\",\
+			\"name\": \"place/geofence\",\
 			\"attributes\": [ { \"key\": \"Event\", \"type\": 2, \"acceptable\": [ \"In\", \"Out\" ] } ],\
 			\"option\": [ { \"key\": \"PlaceId\", \"type\": 1, \"min\": 1, \"max\": -1 } ]\
 		},\
 		{\
-			\"name\": \"app/history/use_freq\",\
+			\"name\": \"stats/app/frequency\",\
 			\"attributes\": [ { \"key\": \"Rank\", \"type\": 1, \"min\": 1, \"max\": -1 }, { \"key\": \"TotalCount\", \"type\": 1, \"min\": 0, \"max\": -1 } ],\
 			\"option\": [  { \"key\": \"AppId\", \"type\": 2, \"acceptable\": [ ] }, { \"key\": \"TimeOfDay\", \"type\": 2, \"acceptable\": [ ] }, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] } ]\
 		},\
 		{\
-			\"name\": \"contact/history/comm_freq\",\
+			\"name\": \"stats/contact/frequency\",\
 			\"attributes\": [ { \"key\": \"Rank\", \"type\": 1, \"min\": 1, \"max\": -1 }, { \"key\": \"TotalCount\", \"type\": 1, \"min\": 0, \"max\": -1 } ],\
 			\"option\": [  { \"key\": \"Address\", \"type\": 2, \"acceptable\": [ ] }, { \"key\": \"TimeOfDay\", \"type\": 2, \"acceptable\": [ ] }, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] } ]\
 		},\
 		{\
-			\"name\": \"music/history/play_freq\",\
+			\"name\": \"stats/music/frequency\",\
 			\"attributes\": [ { \"key\": \"TotalCount\", \"type\": 1, \"min\": 0, \"max\": -1 } ],\
 			\"option\": [ { \"key\": \"TimeOfDay\", \"type\": 2, \"acceptable\": [ ] }, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] } ]\
 		},\
 		{\
-			\"name\": \"video/history/play_freq\",\
+			\"name\": \"stats/video/frequency\",\
 			\"attributes\": [ { \"key\": \"TotalCount\", \"type\": 1, \"min\": 0, \"max\": -1 } ],\
 			\"option\": [ { \"key\": \"TimeOfDay\", \"type\": 2, \"acceptable\": [ ] }, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] } ]\
 		}\
