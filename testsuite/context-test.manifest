@@ -1,0 +1,22 @@
+<manifest>
+	<define>
+		<domain name="context-test"/>
+		<request>
+			<smack request="device::app_logging" type="rw"/>
+			<smack request="device::sys_logging" type="rw"/>
+			<smack request="privilege::tizen::network.get" type="rw"/>
+			<smack request="privilege::tizen::telephony" type="rw"/>
+			<smack request="privilege::tizen::message.read" type="rw"/>
+			<smack request="privilege::tizen::location" type="rw"/>
+			<smack request="privilege::tizen::apphistory.read" type="rw"/>
+			<smack request="privilege::tizen::callhistory.read" type="rw"/>
+			<smack request="privilege::tizen::mediahistory.read" type="rw"/>
+		</request>
+	</define>
+	<request>
+		<domain name="context-test"/>
+	</request>
+	<assign>
+		<filesystem path="/usr/bin/context-test" exec_label="context-test" label="context-test"/>
+	</assign>
+</manifest>
