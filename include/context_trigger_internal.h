@@ -17,6 +17,7 @@
 #ifndef __TIZEN_CONTEXT_CONTEXT_TRIGGER_INTERNAL_H__
 #define __TIZEN_CONTEXT_CONTEXT_TRIGGER_INTERNAL_H__
 
+#include <glib.h>
 #include <context_trigger.h>
 
 /**
@@ -28,8 +29,8 @@
  * @param[in]	object_path		Path of the remote object
  * @param[in]	interface_name	D-Bus interface to invoke method on
  * @param[in]	method_name		The name of the method to invoke
- * @param[in]	user_data		A user-defined string to be delivered as the first parameter of the method.
- *								@c NULL if not passing any values.
+ * @param[in]	param			Tuple with parameters for the method,
+ *								or @c NULL if not passing parameters.
  *
  * @return		0 on success, otherwise a negative error value
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
@@ -40,6 +41,6 @@
  */
 int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h rule,
 		const char *bus_name, const char *object_path, const char *interface_name,
-		const char *method_name, const char *user_data);
+		const char *method_name, GVariant *param);
 
 #endif
