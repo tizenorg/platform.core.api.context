@@ -374,7 +374,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get app id");
 
 	pkgmgrinfo_appinfo_h app_info;
-	error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
+	error = pkgmgrinfo_appinfo_get_usr_appinfo(app_id, getuid(), &app_info);
 	g_free(app_id);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
 
@@ -432,7 +432,7 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 		IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get app id");
 
 		pkgmgrinfo_appinfo_h app_info;
-		error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
+		error = pkgmgrinfo_appinfo_get_usr_appinfo(app_id, getuid(), &app_info);
 		g_free(app_id);
 		IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
 	}
