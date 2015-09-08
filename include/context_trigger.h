@@ -774,6 +774,9 @@ int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_trigger_
  * @remarks		In addition to the privilege http://tizen.org/privilege/appmanager.launch,
  *				if it is an App Control that makes a call to someone,
  *				the privilege http://tizen.org/privilege/call is also required.
+ * @remarks		The launch request of the service application is restricted.
+ *				The function will return #CONTEXT_TRIGGER_ERROR_INVALID_RULE,
+ *				if the launch request is for the service application.
  *
  * @param[in]	rule			The rule
  * @param[in]	app_control		The App Control, which will be used to launch an application
@@ -784,6 +787,7 @@ int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_trigger_
  * @retval		#CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED	Permission denied
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
  */
 int context_trigger_rule_set_action_app_control(context_trigger_rule_h rule, app_control_h app_control);
 
@@ -810,6 +814,7 @@ int context_trigger_rule_set_action_app_control(context_trigger_rule_h rule, app
  * @retval		#CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED	Permission denied
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
  */
 int context_trigger_rule_set_action_notification(context_trigger_rule_h rule, const char* title, const char* content, const char* icon_path, app_control_h app_control);
 

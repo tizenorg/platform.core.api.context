@@ -11,6 +11,7 @@ BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
 BuildRequires: pkgconfig(context-common)
+BuildRequires: pkgconfig(pkgmgr-info)
 
 %description
 Tizen Context Framework Native API

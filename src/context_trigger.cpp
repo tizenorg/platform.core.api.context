@@ -24,6 +24,7 @@
 #include <context_trigger.h>
 #include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
+#include <pkgmgr-info.h>
 #include <request_handler.h>
 #include "rule_validator.h"
 #include "priv_util.h"
@@ -367,6 +368,26 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 	}
 
+	// Err: service app
+	char* app_id = NULL;
+	error = app_control_get_app_id(app_control, &app_id);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get app id");
+
+	pkgmgrinfo_appinfo_h app_info;
+	error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
+	g_free(app_id);
+	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
+
+	char *app_type = NULL;
+	pkgmgrinfo_appinfo_get_component_type(app_info, &app_type);
+	if (!strcmp(app_type, "svcapp")) {
+		_E("Service application is restricted");
+		pkgmgrinfo_appinfo_destroy_appinfo(app_info);
+		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
+	}
+	pkgmgrinfo_appinfo_destroy_appinfo(app_info);
+
+	// Set action type
 	(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, CT_RULE_ACTION_TYPE_APP_CONTROL);
 
 	// Set app control
@@ -400,6 +421,18 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 	std::string type;
 	if ((rule->jrule).get(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type)) {
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
+	}
+
+	// Err: App control check
+	if (app_control) {
+		char* app_id = NULL;
+		error = app_control_get_app_id(app_control, &app_id);
+		IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get app id");
+
+		pkgmgrinfo_appinfo_h app_info;
+		error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
+		g_free(app_id);
+		IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
 	}
 
 	// Set title, content
