@@ -6,6 +6,8 @@ Group:      System/API
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 
+%define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
+
 BuildRequires: cmake
 BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
@@ -35,7 +37,12 @@ export   CFLAGS+=" -DTIZEN_ENGINEER_MODE"
 export CXXFLAGS+=" -DTIZEN_ENGINEER_MODE"
 export   FFLAGS+=" -DTIZEN_ENGINEER_MODE"
 
-cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix} -DMAJORVER=${MAJORVER} -DFULLVER=%{version}
+%if "%{?BUILD_PROFILE}" == "tv"
+export   CFLAGS+=" -D_ALLOW_SERVICE_APP_TRIGGER_"
+export CXXFLAGS+=" -D_ALLOW_SERVICE_APP_TRIGGER_"
+%endif
+
+cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix} -DMAJORVER=${MAJORVER} -DFULLVER=%{version} -DPROFILE=%{?BUILD_PROFILE}
 make %{?jobs:-j%jobs}
 
 %install

@@ -378,6 +378,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 	g_free(app_id);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
 
+#ifndef _ALLOW_SERVICE_APP_TRIGGER_
 	char *app_type = NULL;
 	pkgmgrinfo_appinfo_get_component_type(app_info, &app_type);
 	if (!strcmp(app_type, "svcapp")) {
@@ -385,6 +386,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 		pkgmgrinfo_appinfo_destroy_appinfo(app_info);
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 	}
+#endif
 	pkgmgrinfo_appinfo_destroy_appinfo(app_info);
 
 	// Set action type
