@@ -141,6 +141,9 @@ bool ctx::rule_validator::check_option_string(std::string name, std::string key,
 {
 	init();
 
+	// Err: ';' for SQL injection
+	IF_FAIL_RETURN(value.find(';') == std::string::npos, false);
+
 	// Err: Item with no option
 	if (template_map[name].array_get_size(NULL, KEY_OPTION) <= 0) {
 		return false;
@@ -226,6 +229,9 @@ bool ctx::rule_validator::check_comparison_int(std::string name, std::string key
 bool ctx::rule_validator::check_comparison_string(std::string name, std::string key, std::string op, std::string value)
 {
 	init();
+
+	// Err: ';' for SQL injection
+	IF_FAIL_RETURN(value.find(';') == std::string::npos, false);
 
 	// Err: Invalid attribute key or Invalid value type
 	bool ret = false;

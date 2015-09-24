@@ -414,7 +414,7 @@ bool check_filter_data_string(context_history_filter_e filter_type, const char* 
 	switch (filter_type) {
 	case CONTEXT_HISTORY_FILTER_APP_ID:
 	case CONTEXT_HISTORY_FILTER_WIFI_BSSID:
-		return true;
+		return (g_strstr_len(val, -1, ";") == NULL);
 
 	default:
 		return false;
