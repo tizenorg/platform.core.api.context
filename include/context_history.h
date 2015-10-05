@@ -31,46 +31,55 @@ extern "C" {
 
 /**
  * @brief	The attribute key denoting "application id"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_APP_ID "AppId"
 
 /**
  * @brief	The attribute key denoting "total count"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_TOTAL_COUNT "TotalCount"
 
 /**
  * @brief	The attribute key denoting "total duration"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_TOTAL_DURATION "TotalDuration"
 
 /**
  * @brief	The attribute key denoting "last time"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_LAST_TIME "LastTime"
 
 /**
  * @brief	The attribute key denoting "hour of day"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_HOUR_OF_DAY "HourOfDay"
 
 /**
  * @brief	The attribute key denoting "audio jack status"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_AUDIO_JACK "AudioJack"
 
 /**
  * @brief	The attribute key denoting "system volume"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_SYSTEM_VOLUME "SystemVolume"
 
 /**
  * @brief	The attribute key denoting "media volume"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_MEDIA_VOLUME "MediaVolume"
 
 /**
  * @brief	The attribute key denoting "address"
+ * @since_tizen 2.4
  */
 #define CONTEXT_HISTORY_ADDRESS "Address"
 
