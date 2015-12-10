@@ -694,7 +694,7 @@ int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled_rule_c
  * @brief		Gets a rule stored in the system by rule ID.
  * @since_tizen 2.4
  *
- * @remarks		The @c rule must be released using context_trigger_rule_entry_destroy().
+ * @remarks		The @c rule must be released using context_trigger_rule_destroy().
  *
  * @param[in]	rule_id		The ID of the rule to be retrieved
  * @param[out]	rule		The rule retrieved
