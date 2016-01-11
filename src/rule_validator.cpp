@@ -31,7 +31,7 @@
 #define KEY_TYPE "type"
 #define KEY_MIN "min"
 #define KEY_MAX "max"
-#define KEY_ACCEPTABLE "acceptable"
+#define KEY_VALUES "values"
 #define NO_LIMIT -1
 #define KEY_REF "ref"
 
@@ -89,13 +89,13 @@ bool ctx::rule_validator::check_option(ctx::json& item)
 	// Err: Check if mandatory option is missed
 	std::string val_str;
 	int val;
-	if (name.compare(CT_EVENT_PLACE) == 0) {
+	if (name == CT_EVENT_PLACE) {
 		if (!(item.get(CT_RULE_EVENT_OPTION, CONTEXT_TRIGGER_PLACE_ID, &val)))
 			return false;
-	} else if (name.compare(CT_CONDITION_APP_USE_FREQUENCY) == 0) {
+	} else if (name == CT_CONDITION_APP_USE_FREQUENCY) {
 		if (!(item.get(CT_RULE_CONDITION_OPTION, CONTEXT_TRIGGER_APP_ID, &val_str)))
 			return false;
-	} else if (name.compare(CT_CONDITION_COMMUNICATION_FREQUENCY) == 0) {
+	} else if (name == CT_CONDITION_COMMUNICATION_FREQUENCY) {
 		if (!(item.get(CT_RULE_CONDITION_OPTION, CONTEXT_TRIGGER_ADDRESS, &val_str)))
 			return false;
 	}
@@ -118,10 +118,10 @@ bool ctx::rule_validator::check_option_int(std::string name, std::string key, in
 	ctx::json opt_tempt;
 	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_OPTION, i, &opt_tempt); i++) {
 		std::string t_key;
-		int t_type;
+		std::string t_type;
 		opt_tempt.get(NULL, KEY_KEY, &t_key);
 		opt_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key.compare(key) == 0 && t_type == TYPE_INT) {
+		if (t_key == key && t_type == TYPE_INT_STR) {
 			ret = true;
 			break;
 		}
@@ -154,10 +154,10 @@ bool ctx::rule_validator::check_option_string(std::string name, std::string key,
 	ctx::json opt_tempt;
 	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_OPTION, i, &opt_tempt); i++) {
 		std::string t_key;
-		int t_type;
+		std::string t_type;
 		opt_tempt.get(NULL, KEY_KEY, &t_key);
 		opt_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key.compare(key) == 0 && t_type == TYPE_STRING) {
+		if (t_key == key && t_type == TYPE_STRING_STR) {
 			ret = true;
 			break;
 		}
@@ -166,9 +166,9 @@ bool ctx::rule_validator::check_option_string(std::string name, std::string key,
 
 	// Err: Inappropriate value
 	//   a. spacial case
-	if ((name.compare(CT_CONDITION_APP_USE_FREQUENCY) == 0 || name.compare(CT_CONDITION_COMMUNICATION_FREQUENCY) == 0
-			|| name.compare(CT_CONDITION_MUSIC_PLAYBACK_FREQUENCY) == 0 || name.compare(CT_CONDITION_VIDEO_PLAYBACK_FREQUENCY) == 0)
-			&& key.compare(CONTEXT_TRIGGER_TIME_OF_DAY) == 0) {
+	if ((name == CT_CONDITION_APP_USE_FREQUENCY || name == CT_CONDITION_COMMUNICATION_FREQUENCY
+			|| name == CT_CONDITION_MUSIC_PLAYBACK_FREQUENCY || name == CT_CONDITION_VIDEO_PLAYBACK_FREQUENCY)
+			&& key == CONTEXT_TRIGGER_TIME_OF_DAY) {
 		std::size_t found = value.find("-");
 		if (found == std::string::npos) {
 			return false;
@@ -205,10 +205,10 @@ bool ctx::rule_validator::check_comparison_int(std::string name, std::string key
 	ctx::json attr_tempt;
 	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_ATTR, i, &attr_tempt); i++) {
 		std::string t_key;
-		int t_type;
+		std::string t_type;
 		attr_tempt.get(NULL, KEY_KEY, &t_key);
 		attr_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key.compare(key) == 0 && t_type == TYPE_INT) {
+		if (t_key == key && t_type == TYPE_INT_STR) {
 			ret = true;
 			break;
 		}
@@ -238,10 +238,10 @@ bool ctx::rule_validator::check_comparison_string(std::string name, std::string 
 	ctx::json attr_tempt;
 	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_ATTR, i, &attr_tempt); i++) {
 		std::string t_key;
-		int t_type;
+		std::string t_type;
 		attr_tempt.get(NULL, KEY_KEY, &t_key);
 		attr_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key.compare(key) == 0 && t_type == TYPE_STRING) {
+		if (t_key == key && t_type == TYPE_STRING_STR) {
 			ret = true;
 			break;
 		}
@@ -270,7 +270,7 @@ bool ctx::rule_validator::check_valid_key(int type, std::string name, std::strin
 	for (int i = 0; template_map[name].get_array_elem(NULL, json_key.c_str(), i, &tempt); i++) {
 		std::string t_key;
 		tempt.get(NULL, KEY_KEY, &t_key);
-		if (t_key.compare(key) == 0) {
+		if (t_key == key) {
 			ret = true;
 			break;
 		}
@@ -298,13 +298,13 @@ bool check_value_int(ctx::json& tempt, int value)
 bool check_value_string(ctx::json& tempt, std::string value)
 {
 	// case1: any value is accepted
-	if (tempt.array_get_size(NULL, KEY_ACCEPTABLE) <= 0)
+	if (tempt.array_get_size(NULL, KEY_VALUES) <= 0)
 		return true;
 
 	// case2: check acceptable value
 	std::string t_val;
-	for (int i = 0; tempt.get_array_elem(NULL, KEY_ACCEPTABLE, i, &t_val); i++) {
-		if (t_val.compare(value) == 0)
+	for (int i = 0; tempt.get_array_elem(NULL, KEY_VALUES, i, &t_val); i++) {
+		if (t_val == value)
 			return true;
 	}
 
@@ -322,10 +322,10 @@ bool ctx::rule_validator::set_ref_info(int type, ctx::json* jref, std::string na
 	ctx::json tempt;
 	for (int i = 0; template_map[name].get_array_elem(NULL, json_key.c_str(), i, &tempt); i++) {
 		std::string k;
-		int dt;
+		std::string dt;
 		tempt.get(NULL, KEY_KEY, &k);
 
-		if (key.compare(k) == 0) {
+		if (key == k) {
 			tempt.get(NULL, KEY_TYPE, &dt);
 
 			ctx::json temp;
@@ -348,7 +348,7 @@ bool ctx::rule_validator::set_ref_info(int type, ctx::json* jref, std::string na
 }
 
 // called by context_trigger_rule_entry_add_comparison()
-int ctx::rule_validator::get_data_type(int type, std::string name, std::string key)
+std::string ctx::rule_validator::get_data_type(int type, std::string name, std::string key)
 {
 	init();
 
@@ -359,26 +359,26 @@ int ctx::rule_validator::get_data_type(int type, std::string name, std::string k
 		std::string k;
 		tempt.get(NULL, KEY_KEY, &k);
 
-		if (key.compare(k) == 0) {
-			int dt;
+		if (key == k) {
+			std::string dt;
 			tempt.get(NULL, KEY_TYPE, &dt);
 			return dt;
 		}
 	}
 
-	return -1;
+	return "";
 }
 
 // called by context_trigger_rule_add_entry()
 bool ctx::rule_validator::check_referential_data(std::string name, ctx::json& ref_info)
 {
-	std::map<std::string, int> type_map;
+	std::map<std::string, std::string> type_map;
 
 	ctx::json ref_data;
 	for (int i = 0; ref_info.get_array_elem(NULL, KEY_OPTION, i, &ref_data); i++) {
 		std::string ref_key;
 		ref_data.get(NULL, KEY_REF, &ref_key);
-		int cond_type;
+		std::string cond_type;
 		ref_data.get(NULL, KEY_TYPE, &cond_type);
 
 		if (type_map.count(ref_key) == 0) {
@@ -393,7 +393,7 @@ bool ctx::rule_validator::check_referential_data(std::string name, ctx::json& re
 	for (int i = 0; ref_info.get_array_elem(NULL, KEY_ATTR, i, &ref_data); i++) {
 		std::string ref_key;
 		ref_data.get(NULL, KEY_REF, &ref_key);
-		int cond_type;
+		std::string cond_type;
 		ref_data.get(NULL, KEY_TYPE, &cond_type);
 
 		if (type_map.count(ref_key) == 0) {
