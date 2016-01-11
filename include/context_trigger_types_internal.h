@@ -99,8 +99,9 @@
 #define TYPE_OPTION 1
 #define TYPE_ATTR 2
 
-#define TYPE_INT 1
-#define TYPE_STRING 2
+#define TYPE_INT_STR "integer"
+#define TYPE_STRING_STR "string"
+#define TYPE_DOUBLE_STR "double"
 
 #define TYPE_OPTION_STR "option"
 #define TYPE_ATTR_STR "attributes"
