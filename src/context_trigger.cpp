@@ -546,11 +546,6 @@ EXTAPI int context_trigger_rule_event_is_supported(context_trigger_event_e event
 	_D("BEGIN");
 	ASSERT_NOT_NULL(supported);
 
-	if (event_item == CONTEXT_TRIGGER_EVENT_TIME) {
-		*supported = true;
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	}
-
 	*supported = false;
 
 	std::string eitem_str = convert_event_to_string(event_item);
@@ -597,11 +592,6 @@ EXTAPI int context_trigger_rule_condition_is_supported(context_trigger_condition
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(supported);
-
-	if (condition_item == CONTEXT_TRIGGER_CONDITION_TIME) {
-		*supported = true;
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	}
 
 	*supported = false;
 
