@@ -19,11 +19,11 @@
 
 #define RULE_INFO "{ \"templates\": [\
 		{\
-			\"name\": \"time/alarm\",\
+			\"name\": \"device/alarm\",\
 			\"attributes\": [ { \"key\": \"TimeOfDay\", \"type\": 1, \"min\": 0, \"max\": 1439}, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] } ]\
 		},\
 		{\
-			\"name\": \"time/now\",\
+			\"name\": \"device/time\",\
 			\"attributes\": [ { \"key\": \"TimeOfDay\", \"type\": 1, \"min\": 0, \"max\": 1439}, { \"key\": \"DayOfWeek\", \"type\": 2, \"acceptable\": [ \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Weekday\", \"Weekend\" ] }, { \"key\" : \"DayOfMonth\", \"type\": 1, \"min\": 1, \"max\": 31} ]\
 		},\
 		{\
