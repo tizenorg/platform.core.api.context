@@ -90,7 +90,9 @@ extern "C" {
 
 /**
  * @brief	The attribute key denoting "time of day".
- * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_int().@n
+ * @details	This can be used as a key of context_trigger_rule_entry_add_option_string(),
+ *			or left operands of context_trigger_rule_entry_add_comparison_int().@n
+ *			When being used as option, it is time interval of the day. For example, "13-15" denotes "from 1 PM to 3 PM".
  *			When being used with #CONTEXT_TRIGGER_EVENT_TIME or #CONTEXT_TRIGGER_CONDITION_TIME, it's unit is "minute",
  *			the valid range of the corresponding right operands is thus from 0 (12:00 AM) to 1439 (11:59 PM).
  * @since_tizen 2.4
@@ -99,10 +101,11 @@ extern "C" {
 
 /**
  * @brief	The attribute key denoting "day of week".
- * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
+ * @details	This can be used as a key of context_trigger_rule_entry_add_option_string(),
+ *			or left operands of context_trigger_rule_entry_add_comparison_string().@n
  *			As the right operands of this attribute, one of the following values are allowed:
- *			#CONTEXT_TRIGGER_MON, #CONTEXT_TRIGGER_TUE, #CONTEXT_TRIGGER_WED, #CONTEXT_TRIGGER_THU,
- *			#CONTEXT_TRIGGER_FRI, #CONTEXT_TRIGGER_SAT, and #CONTEXT_TRIGGER_SUN.
+ *			#CONTEXT_TRIGGER_MON, #CONTEXT_TRIGGER_TUE, #CONTEXT_TRIGGER_WED, #CONTEXT_TRIGGER_THU, #CONTEXT_TRIGGER_FRI,
+ *			#CONTEXT_TRIGGER_SAT, #CONTEXT_TRIGGER_SUN, #CONTEXT_TRIGGER_WEEKDAY, and #CONTEXT_TRIGGER_WEEKEND.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_DAY_OF_WEEK "DayOfWeek"
@@ -241,72 +244,81 @@ extern "C" {
 
 /**
  * @brief	The attribute value denoting Monday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_MON "Mon"
 
 /**
  * @brief	The attribute value denoting Tuesday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_TUE "Tue"
 
 /**
  * @brief	The attribute value denoting Wednesday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_WED "Wed"
 
 /**
  * @brief	The attribute value denoting Thursday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_THU "Thu"
 
 /**
  * @brief	The attribute value denoting Friday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_FRI "Fri"
 
 /**
  * @brief	The attribute value denoting Saturday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SAT "Sat"
 
 /**
  * @brief	The attribute value denoting Sunday.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_SUN "Sun"
 
 /**
  * @brief	The attribute value denoting Weekdays.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_WEEKDAY "Weekday"
 
 /**
  * @brief	The attribute value denoting Weekends.
- * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find the corresponding left operand attribute keys.
+ * @details	This can be used as a value of context_trigger_rule_entry_add_option_string()
+ *			or right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding option keys or left operand attribute keys.
  * @since_tizen 2.4
  */
 #define CONTEXT_TRIGGER_WEEKEND "Weekend"
@@ -727,6 +739,8 @@ int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h* rule);
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ *
+ * @see			context_trigger_rule_destroy()
  */
 int context_trigger_rule_create(context_trigger_logical_type_e logical_type, context_trigger_rule_h* rule);
 
@@ -740,8 +754,8 @@ int context_trigger_rule_create(context_trigger_logical_type_e logical_type, con
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  *
- * @see			context_trigger_rule_create()
- * @see			context_Trigger_get_rule_by_id()
+ * @pre			context_trigger_rule_create()
+ * @see			context_trigger_get_rule_by_id()
  */
 int context_trigger_rule_destroy(context_trigger_rule_h rule);
 
@@ -830,6 +844,8 @@ int context_trigger_rule_set_action_notification(context_trigger_rule_h rule, co
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ *
+ * @see			context_trigger_rule_get_description()
  */
 int context_trigger_rule_set_description(context_trigger_rule_h rule, const char* description);
 
@@ -847,6 +863,8 @@ int context_trigger_rule_set_description(context_trigger_rule_h rule, const char
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ *
+ * @see			context_trigger_rule_set_description()
  */
 int context_trigger_rule_get_description(context_trigger_rule_h rule, char** description);
 
@@ -865,6 +883,8 @@ int context_trigger_rule_get_description(context_trigger_rule_h rule, char** des
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ *
+ * @see			context_trigger_rule_entry_destroy()
  */
 int context_trigger_rule_event_create(context_trigger_event_e event_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry);
 
@@ -897,6 +917,8 @@ int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, 
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ *
+ * @see			context_trigger_rule_entry_destroy()
  */
 int context_trigger_rule_condition_create(context_trigger_condition_e condition_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry);
 
@@ -924,8 +946,8 @@ int context_trigger_rule_condition_is_supported(context_trigger_condition_e cond
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  *
- * @see			context_trigger_rule_event_create()
- * @see			context_trigger_rule_condition_create()
+ * @pre			context_trigger_rule_event_create()
+ * @pre			context_trigger_rule_condition_create()
  */
 int context_trigger_rule_entry_destroy(context_trigger_rule_entry_h entry);
 
@@ -943,6 +965,9 @@ int context_trigger_rule_entry_destroy(context_trigger_rule_entry_h entry);
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @see			context_trigger_rule_entry_add_option()
+ * @see			context_trigger_rule_entry_add_option_string()
  */
 int context_trigger_rule_entry_add_option_int(context_trigger_rule_entry_h entry, const char* option_key, int value);
 
@@ -960,6 +985,9 @@ int context_trigger_rule_entry_add_option_int(context_trigger_rule_entry_h entry
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @see			context_trigger_rule_entry_add_option()
+ * @see			context_trigger_rule_entry_add_option_int()
  */
 int context_trigger_rule_entry_add_option_string(context_trigger_rule_entry_h entry, const char* option_key, const char* value);
 
@@ -977,6 +1005,9 @@ int context_trigger_rule_entry_add_option_string(context_trigger_rule_entry_h en
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @see			context_trigger_rule_entry_add_option_int()
+ * @see			context_trigger_rule_entry_add_option_string()
  */
 int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h entry, const char* option_key, const char* event_data_key);
 
@@ -995,13 +1026,20 @@ int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h entry, co
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @post		context_trigger_rule_entry_add_comparison()
+ * @post		context_trigger_rule_entry_add_comparison_int()
+ * @post		context_trigger_rule_entry_add_comparison_string()
  */
 int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry, context_trigger_logical_type_e logical_type, const char* key);
 
 /**
  * @brief		Adds a comparison between an attribute key and an integer.
  * @details		The key needs to be registered in advance, via context_trigger_rule_entry_add_key().
- *				As the comparison operator, one of the following operators is allowed: "==", "!=", "<", ">", "<=", and ">=".
+ *				As the comparison operator, one of the following operators is allowed:
+ *				#CONTEXT_TRIGGER_EQUAL_TO, #CONTEXT_TRIGGER_NOT_EQUAL_TO, #CONTEXT_TRIGGER_LESS_THAN,
+ *				#CONTEXT_TRIGGER_GREATER_THAN, #CONTEXT_TRIGGER_LESS_THAN_OR_EQUAL_TO
+ *				and #CONTEXT_TRIGGER_GREATER_THAN_OR_EQUAL_TO.
  * @since_tizen 2.4
  *
  * @param[in]	entry			The event or condition entry
@@ -1015,13 +1053,18 @@ int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry, conte
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_NO_DATA				The key was not added in the entry
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @pre			context_trigger_rule_entry_add_key()
+ * @see			context_trigger_rule_entry_add_comparison()
+ * @see			context_trigger_rule_entry_add_comparison_string()
  */
 int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_entry_h entry, const char* key, const char* comp_operator, int  value);
 
 /**
  * @brief		Adds a comparison between an attribute key and a string.
  * @details		The key needs to be registered in advance, via context_trigger_rule_entry_add_key().
- *				As the comparison operator, one of the following operators is allowed: "==" and "!=".
+ *				As the comparison operator, one of the following operators is allowed:
+ *				#CONTEXT_TRIGGER_EQUAL_TO and #CONTEXT_TRIGGER_NOT_EQUAL_TO.
  * @since_tizen 2.4
  *
  * @param[in]	entry			The event or condition entry
@@ -1035,6 +1078,10 @@ int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_entry_h e
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_NO_DATA				The key was not added in the entry
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @pre			context_trigger_rule_entry_add_key()
+ * @see			context_trigger_rule_entry_add_comparison()
+ * @see			context_trigger_rule_entry_add_comparison_int()
  */
 int context_trigger_rule_entry_add_comparison_string(context_trigger_rule_entry_h entry, const char* key, const char* comp_operator, const char* value);
 
@@ -1054,6 +1101,10 @@ int context_trigger_rule_entry_add_comparison_string(context_trigger_rule_entry_
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_NO_DATA				The key was not added in the entry
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_RULE			Invalid rule
+ *
+ * @pre			context_trigger_rule_entry_add_key()
+ * @see			context_trigger_rule_entry_add_comparison_int()
+ * @see			context_trigger_rule_entry_add_comparison_string()
  */
 int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry, const char* key, const char* comp_operator, const char* event_data_key);
 
