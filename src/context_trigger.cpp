@@ -38,7 +38,6 @@
 static std::string convert_event_to_string(context_trigger_event_e item);
 static std::string convert_condition_to_string(context_trigger_condition_e item);
 static std::string convert_logical_type_to_string(context_trigger_logical_type_e logical_type);
-static int convert_operator(std::string type, std::string op, std::string* converted_op);
 //static std::string int_to_string(int value);
 //static std::string double_to_string(int value);
 
@@ -794,18 +793,13 @@ EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_
 	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR, name, key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
+	// Err: Invalid operator
 	std::string type = ctx::rule_validator::get_data_type(TYPE_ATTR, name, key);
+	ret = ctx::rule_validator::is_valid_operator(type, op);
+	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	int error;
-	std::string converted_op;
-	error = convert_operator(type, op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
-
-	error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, converted_op, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
-	if (error != ERR_NONE)
-		return error;
+	int error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, op, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
+	IF_FAIL_RETURN(error == ERR_NONE, error);
 
 	// Set reference information
 	ret = ctx::rule_validator::set_ref_info(TYPE_ATTR, &(entry->jref), name, key, event_data_key);
@@ -819,37 +813,29 @@ EXTAPI int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_en
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op);
 
-	int error;
-	std::string converted_op;
-
 	std::string name;
 	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
 
 	bool ret = ctx::rule_validator::check_comparison_int(name, key, op, value);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = convert_operator(TYPE_INT_STR, op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
-
-	error = context_trigger_rule_entry_add_comparison_int_internal(entry, key, converted_op, value);
+	int error = context_trigger_rule_entry_add_comparison_int_internal(entry, key, op, value);
 	return error;
 }
 /*
 EXTAPI int context_trigger_rule_entry_add_comparison_double(context_trigger_rule_entry_h entry, const char* key, const char* op, double value)
 {
+	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op);
 
-	int error;
-	std::string converted_op;
+	std::string name;
+	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
 
-	error = convert_operator("double", op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
+	// TODO: check_comparison_double()
+	bool ret = ctx::rule_validator::check_comparison_double(name, key, op, value);
+	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, double_to_string(value));
+	int error = context_trigger_rule_entry_add_comparison_internal(entry, key, op, double_to_string(value));
 	return error;
 }
 */
@@ -858,21 +844,13 @@ EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op && value);
 
-	int error;
-	std::string converted_op;
-
 	std::string name;
 	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
 
 	bool ret = ctx::rule_validator::check_comparison_string(name, key, op, value);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = convert_operator(TYPE_STRING_STR, op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
-
-	error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, converted_op, value);
+	int error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, op, value);
 	return error;
 }
 
@@ -999,25 +977,6 @@ std::string convert_logical_type_to_string(context_trigger_logical_type_e logica
 	return str;
 }
 
-int convert_operator(std::string type, std::string op, std::string* converted_op)
-{
-	if (op.compare("==") == 0) {
-		*converted_op = "eq";
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	} else if(op.compare("!=") == 0) {
-		*converted_op = "neq";
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	}
-
-	if (type.compare(TYPE_INT_STR) == 0 || type.compare(TYPE_DOUBLE_STR) == 0) {
-		if (op.compare("<") == 0 || op.compare("<=") == 0 || op.compare(">") == 0 || op.compare(">=") == 0) {
-			*converted_op = op;
-			return CONTEXT_TRIGGER_ERROR_NONE;
-		}
-	}
-
-	return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
-}
 /*
 std::string int_to_string(int value)
 {
