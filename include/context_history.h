@@ -309,7 +309,6 @@ int context_history_filter_set_string(context_history_filter_h filter, context_h
  *
  * @pre context_history_create()
  * @post context_history_list_destroy()
- * @see context_history_get_list()
  */
 int context_history_get_list(context_history_h handle, context_history_data_e data_type, context_history_filter_h filter, context_history_list_h* list);
 
