@@ -216,6 +216,8 @@ bool ctx::rule_validator::check_comparison_int(std::string name, std::string key
 	IF_FAIL_RETURN(ret, false);
 
 	// Err: Invalid operator for the value
+	ret = is_valid_operator(TYPE_INT_STR, op);
+	IF_FAIL_RETURN(ret, false);
 
 	// Err: Inappropriate value
 	//    a. normal case
@@ -249,6 +251,8 @@ bool ctx::rule_validator::check_comparison_string(std::string name, std::string 
 	IF_FAIL_RETURN(ret, false);
 
 	// Err: Invalid operator for the value
+	ret = is_valid_operator(TYPE_STRING_STR, op);
+	IF_FAIL_RETURN(ret, false);
 
 	// Err: Inappropriate value
 	//    a. normal case
@@ -406,4 +410,20 @@ bool ctx::rule_validator::check_referential_data(std::string name, ctx::json& re
 	}
 
 	return true;
+}
+
+bool ctx::rule_validator::is_valid_operator(std::string type, std::string op)
+{
+	if (op == CONTEXT_TRIGGER_EQUAL_TO || op == CONTEXT_TRIGGER_NOT_EQUAL_TO) {
+		return true;
+	}
+
+	if (type == TYPE_INT_STR || type == TYPE_DOUBLE_STR) {
+		if (op == CONTEXT_TRIGGER_GREATER_THAN || op == CONTEXT_TRIGGER_GREATER_THAN_OR_EQUAL_TO ||
+			op == CONTEXT_TRIGGER_LESS_THAN || op == CONTEXT_TRIGGER_LESS_THAN_OR_EQUAL_TO) {
+			return true;
+		}
+	}
+
+	return false;
 }

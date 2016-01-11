@@ -33,6 +33,7 @@ namespace ctx {
 		bool set_ref_info(int type, ctx::json *jref, std::string name, std::string key, std::string ref_key);
 		std::string get_data_type(int type, std::string name, std::string key);
 		bool check_referential_data(std::string name, ctx::json &ref_info);
+		bool is_valid_operator(std::string type, std::string op);
 
 	}
 }	/* namespace ctx */
