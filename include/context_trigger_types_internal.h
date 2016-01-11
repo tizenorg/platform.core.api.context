@@ -63,7 +63,7 @@
 
 #define CT_RESPONSE "RES"
 
-#define	CT_EVENT_TIME "time/alarm"
+#define CT_EVENT_TIME "device/alarm"
 #define CT_EVENT_BATTERY "system/battery"
 #define CT_EVENT_CHARGER "system/charger"
 #define CT_EVENT_GPS "system/gps"
@@ -79,7 +79,7 @@
 #define CT_EVENT_ACTIVITY_RUNNING "activity/running"
 #define CT_EVENT_ACTIVITY_IN_VEHICLE "activity/in_vehicle"
 #define CT_EVENT_PLACE "place/geofence"
-#define CT_CONDITION_TIME "time/now"
+#define CT_CONDITION_TIME "device/time"
 #define CT_CONDITION_BATTERY "system/battery"
 #define CT_CONDITION_CHARGER "system/charger"
 #define CT_CONDITION_GPS "system/gps"
