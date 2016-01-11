@@ -20,7 +20,7 @@
 #include <types_internal.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
-#include "rule_info.h"
+#include <request_handler.h>
 #include "rule_validator.h"
 
 #define KEY_TEMPLATE "templates"
@@ -32,16 +32,15 @@
 #define KEY_MIN "min"
 #define KEY_MAX "max"
 #define KEY_VALUES "values"
-#define NO_LIMIT -1
 #define KEY_REF "ref"
 
 typedef std::map<std::string, ctx::json> template_map_t;
 template_map_t template_map;	// <name, template>
 
-static void init(void);
 static int string_to_int(std::string str);
-static bool check_value_int(ctx::json& tempt, int value);
-static bool check_value_string(ctx::json& tempt, std::string value);
+static bool check_value_int(ctx::json& tmpl, std::string key, int value);
+static bool check_value_string(ctx::json& tmpl, std::string key, std::string value);
+static ctx::json get_template(std::string name);
 
 int string_to_int(std::string str)
 {
@@ -54,37 +53,49 @@ int string_to_int(std::string str)
 	return i;
 }
 
-void init(void)
+ctx::json get_template(std::string name)
 {
-	static bool initialized = false;
-	if (initialized)
-		return;
+	ctx::rule_validator::request_template(name);
+	return template_map[name];
+}
 
-	// Load from Data
-	ctx::json t = ctx::json(static_cast<const char*>(RULE_INFO));
+int ctx::rule_validator::request_template(std::string name)
+{
+	template_map_t::iterator it = template_map.find(name);
+	IF_FAIL_RETURN(it == template_map.end(), ERR_NONE);
 
-	ctx::json elem;
-	for (int i = 0; t.get_array_elem(NULL, "templates", i, &elem); i++) {
-		std::string name;
-		elem.get(NULL, "name", &name);
+	// Request template
+	ctx::json request;
+	request.set(NULL, SUBJECT_STR, name);
 
-		template_map[name] = elem;
-	}
+	int req_id;
+	ctx::json tmpl;
+	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET_TEMPLATE, &request, &req_id, &tmpl);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get request");
 
-	initialized = true;
+	template_map[name] = tmpl;
+
+	return ERR_NONE;
 }
 
 // called by context_trigger_rule_add_entry()
 bool ctx::rule_validator::check_option(ctx::json& item)
 {
-	init();
-
 	std::string name;
 	item.get(NULL, CT_RULE_EVENT_ITEM, &name);
 
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
+
 	// No option needed
-	if (template_map[name].array_get_size(NULL, KEY_OPTION) <= 0)
+	ctx::json opt_tmpl;
+	tmpl.get(NULL, KEY_OPTION, &opt_tmpl);
+
+	std::list<std::string> opt_keys;
+	IF_FAIL_RETURN(opt_tmpl.get_keys(&opt_keys), false);
+	if (opt_keys.size() <= 0) {
 		return true;
+	}
 
 	// Err: Check if mandatory option is missed
 	std::string val_str;
@@ -106,31 +117,25 @@ bool ctx::rule_validator::check_option(ctx::json& item)
 // called by context_trigger_rule_entry_add_option_int()
 bool ctx::rule_validator::check_option_int(std::string name, std::string key, int value)
 {
-	init();
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
+
+	ctx::json opt_tmpl;
+	tmpl.get(NULL, KEY_OPTION, &opt_tmpl);
 
 	// Err: Item with no option
-	if (template_map[name].array_get_size(NULL, KEY_OPTION) <= 0) {
-		return false;
-	}
+	std::list<std::string> opt_keys;
+	IF_FAIL_RETURN(opt_tmpl.get_keys(&opt_keys), false);
+	IF_FAIL_RETURN(opt_keys.size() > 0, false);
 
 	// Err: Invalid option key or Invalid value type
-	bool ret = false;
-	ctx::json opt_tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_OPTION, i, &opt_tempt); i++) {
-		std::string t_key;
-		std::string t_type;
-		opt_tempt.get(NULL, KEY_KEY, &t_key);
-		opt_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key == key && t_type == TYPE_INT_STR) {
-			ret = true;
-			break;
-		}
-	}
-	IF_FAIL_RETURN(ret, false);
+	std::string t_type;
+	bool ret = opt_tmpl.get(key.c_str(), KEY_TYPE, &t_type);
+	IF_FAIL_RETURN(ret && t_type == TYPE_INT_STR, false);
 
 	// Err: Inappropriate value
 	//   a. normal case
-	ret = check_value_int(opt_tempt, value);
+	ret = check_value_int(opt_tmpl, key, value);
 	IF_FAIL_RETURN(ret, false);
 
 	return true;
@@ -139,30 +144,24 @@ bool ctx::rule_validator::check_option_int(std::string name, std::string key, in
 // called by context_trigger_rule_entry_add_option_string()
 bool ctx::rule_validator::check_option_string(std::string name, std::string key, std::string value)
 {
-	init();
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
+
+	ctx::json opt_tmpl;
+	tmpl.get(NULL, KEY_OPTION, &opt_tmpl);
 
 	// Err: ';' for SQL injection
 	IF_FAIL_RETURN(value.find(';') == std::string::npos, false);
 
 	// Err: Item with no option
-	if (template_map[name].array_get_size(NULL, KEY_OPTION) <= 0) {
-		return false;
-	}
+	std::list<std::string> opt_keys;
+	IF_FAIL_RETURN(opt_tmpl.get_keys(&opt_keys), false);
+	IF_FAIL_RETURN(opt_keys.size() > 0, false);
 
 	// Err: Invalid option key or Invalid value type
-	bool ret = false;
-	ctx::json opt_tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_OPTION, i, &opt_tempt); i++) {
-		std::string t_key;
-		std::string t_type;
-		opt_tempt.get(NULL, KEY_KEY, &t_key);
-		opt_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key == key && t_type == TYPE_STRING_STR) {
-			ret = true;
-			break;
-		}
-	}
-	IF_FAIL_RETURN(ret, false);
+	std::string t_type;
+	bool ret = opt_tmpl.get(key.c_str(), KEY_TYPE, &t_type);
+	IF_FAIL_RETURN(ret && t_type == TYPE_STRING_STR, false);
 
 	// Err: Inappropriate value
 	//   a. spacial case
@@ -189,7 +188,7 @@ bool ctx::rule_validator::check_option_string(std::string name, std::string key,
 	}
 
 	//   b. normal case
-	ret = check_value_string(opt_tempt, value);
+	ret = check_value_string(opt_tmpl, key, value);
 	IF_FAIL_RETURN(ret, false);
 
 	return true;
@@ -198,30 +197,29 @@ bool ctx::rule_validator::check_option_string(std::string name, std::string key,
 // called by context_trigger_rule_entry_add_comparison_int()
 bool ctx::rule_validator::check_comparison_int(std::string name, std::string key, std::string op, int value)
 {
-	init();
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
+
+	ctx::json attr_tmpl;
+	tmpl.get(NULL, KEY_ATTR, &attr_tmpl);
 
 	// Err: Invalid attribute key or Invalid value type
-	bool ret = false;
-	ctx::json attr_tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_ATTR, i, &attr_tempt); i++) {
-		std::string t_key;
-		std::string t_type;
-		attr_tempt.get(NULL, KEY_KEY, &t_key);
-		attr_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key == key && t_type == TYPE_INT_STR) {
-			ret = true;
-			break;
-		}
-	}
-	IF_FAIL_RETURN(ret, false);
+	std::string t_type;
+	bool ret = attr_tmpl.get(key.c_str(), KEY_TYPE, &t_type);
+	IF_FAIL_RETURN(ret && t_type == TYPE_INT_STR, false);
 
 	// Err: Invalid operator for the value
+	//    a. normal case
 	ret = is_valid_operator(TYPE_INT_STR, op);
 	IF_FAIL_RETURN(ret, false);
+	//    b. special case
+	if (name == CT_EVENT_TIME && key == CONTEXT_TRIGGER_TIME_OF_DAY) {
+		IF_FAIL_RETURN(op == CONTEXT_TRIGGER_EQUAL_TO, false);
+	}
 
 	// Err: Inappropriate value
 	//    a. normal case
-	ret = check_value_int(attr_tempt, value);
+	ret = check_value_int(attr_tmpl, key, value);
 	IF_FAIL_RETURN(ret, false);
 
 	return true;
@@ -230,25 +228,19 @@ bool ctx::rule_validator::check_comparison_int(std::string name, std::string key
 // called by context_trigger_rule_entry_add_comparison_string()
 bool ctx::rule_validator::check_comparison_string(std::string name, std::string key, std::string op, std::string value)
 {
-	init();
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != ctx::json(EMPTY_JSON_OBJECT), false);
+
+	ctx::json attr_tmpl;
+	tmpl.get(NULL, KEY_ATTR, &attr_tmpl);
 
 	// Err: ';' for SQL injection
 	IF_FAIL_RETURN(value.find(';') == std::string::npos, false);
 
 	// Err: Invalid attribute key or Invalid value type
-	bool ret = false;
-	ctx::json attr_tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, KEY_ATTR, i, &attr_tempt); i++) {
-		std::string t_key;
-		std::string t_type;
-		attr_tempt.get(NULL, KEY_KEY, &t_key);
-		attr_tempt.get(NULL, KEY_TYPE, &t_type);
-		if (t_key == key && t_type == TYPE_STRING_STR) {
-			ret = true;
-			break;
-		}
-	}
-	IF_FAIL_RETURN(ret, false);
+	std::string t_type;
+	bool ret = attr_tmpl.get(key.c_str(), KEY_TYPE, &t_type);
+	IF_FAIL_RETURN(ret && t_type == TYPE_STRING_STR, false);
 
 	// Err: Invalid operator for the value
 	ret = is_valid_operator(TYPE_STRING_STR, op);
@@ -256,58 +248,49 @@ bool ctx::rule_validator::check_comparison_string(std::string name, std::string 
 
 	// Err: Inappropriate value
 	//    a. normal case
-	ret = check_value_string(attr_tempt, value);
+	ret = check_value_string(attr_tmpl, key, value);
 	IF_FAIL_RETURN(ret, false);
 
 	return true;
 }
 
-// called by context_trigger_rule_entry_add_comparison_string()
-bool ctx::rule_validator::check_valid_key(int type, std::string name, std::string key)
+bool ctx::rule_validator::check_valid_key(std::string type, std::string name, std::string key)
 {
-	init();
-	std::string json_key = (type == TYPE_OPTION)? KEY_OPTION : KEY_ATTR;
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
 
 	// Err: Invalid key
-	bool ret = false;
-	ctx::json tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, json_key.c_str(), i, &tempt); i++) {
-		std::string t_key;
-		tempt.get(NULL, KEY_KEY, &t_key);
-		if (t_key == key) {
-			ret = true;
-			break;
-		}
-	}
+	ctx::json tmp;
+	bool ret = tmpl.get(type.c_str(), key.c_str(), &tmp);
 	IF_FAIL_RETURN(ret, false);
 
 	return true;
 }
 
-bool check_value_int(ctx::json& tempt, int value)
+bool check_value_int(ctx::json& tmpl, std::string key, int value)
 {
 	int min, max;
-	tempt.get(NULL, KEY_MIN, &min);
-	tempt.get(NULL, KEY_MAX, &max);
 
-	if (min != NO_LIMIT && value < min)
-		return false;
+	if (tmpl.get(key.c_str(), KEY_MIN, &min)) {
+		IF_FAIL_RETURN(value >= min, false);
+	}
 
-	if (max != NO_LIMIT && value > max)
-		return false;
+	if (tmpl.get(key.c_str(), KEY_MAX, &max)) {
+		IF_FAIL_RETURN(value <= max, false);
+	}
 
 	return true;
 }
 
-bool check_value_string(ctx::json& tempt, std::string value)
+bool check_value_string(ctx::json& tmpl, std::string key, std::string value)
 {
 	// case1: any value is accepted
-	if (tempt.array_get_size(NULL, KEY_VALUES) <= 0)
+	if (tmpl.array_get_size(key.c_str(), KEY_VALUES) <= 0)
 		return true;
 
 	// case2: check acceptable value
 	std::string t_val;
-	for (int i = 0; tempt.get_array_elem(NULL, KEY_VALUES, i, &t_val); i++) {
+	for (int i = 0; tmpl.get_array_elem(key.c_str(), KEY_VALUES, i, &t_val); i++) {
 		if (t_val == value)
 			return true;
 	}
@@ -317,60 +300,49 @@ bool check_value_string(ctx::json& tempt, std::string value)
 
 // called by context_trigger_rule_entry_add_comparison()
 // called by context_trigger_rule_entry_add_option()
-bool ctx::rule_validator::set_ref_info(int type, ctx::json* jref, std::string name, std::string key, std::string ref_data)
+bool ctx::rule_validator::set_ref_info(std::string type, ctx::json* jref, std::string name, std::string key, std::string ref_data)
 {
-	init();
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
 
-	std::string json_key = (type == TYPE_OPTION)? KEY_OPTION : KEY_ATTR;
+	ctx::json detailed_tmpl;
+	tmpl.get(NULL, type.c_str(), &detailed_tmpl);
 
-	ctx::json tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, json_key.c_str(), i, &tempt); i++) {
-		std::string k;
-		std::string dt;
-		tempt.get(NULL, KEY_KEY, &k);
+	std::string dt;
+	bool ret = detailed_tmpl.get(key.c_str(), KEY_TYPE, &dt);
+	IF_FAIL_RETURN(ret, false);
 
-		if (key == k) {
-			tempt.get(NULL, KEY_TYPE, &dt);
+	ctx::json temp;
+	temp.set(NULL, KEY_NAME, name);
+	temp.set(NULL, KEY_KEY, key);
+	temp.set(NULL, KEY_TYPE, dt);
+	temp.set(NULL, KEY_REF, ref_data);
 
-			ctx::json temp;
-			temp.set(NULL, KEY_NAME, name);
-			temp.set(NULL, KEY_KEY, key);
-			temp.set(NULL, KEY_TYPE, dt);
-			temp.set(NULL, KEY_REF, ref_data);
-
-			if (type == TYPE_OPTION) {
-				jref->array_append(NULL, KEY_OPTION, temp);
-			} else if (type == TYPE_ATTR) {
-				jref->array_append(NULL, KEY_ATTR, temp);
-			} else {
-				return false;
-			}
-			return true;
-		}
+	if (type == TYPE_OPTION_STR) {
+		jref->array_append(NULL, KEY_OPTION, temp);
+	} else if (type == TYPE_ATTR_STR) {
+		jref->array_append(NULL, KEY_ATTR, temp);
+	} else {
+		return false;
 	}
-	return false;
+
+	return true;;
 }
 
 // called by context_trigger_rule_entry_add_comparison()
-std::string ctx::rule_validator::get_data_type(int type, std::string name, std::string key)
+std::string ctx::rule_validator::get_data_type(std::string type, std::string name, std::string key)
 {
-	init();
+	ctx::json tmpl = get_template(name);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
 
-	std::string json_key = (type == TYPE_OPTION)? KEY_OPTION : KEY_ATTR;
+	ctx::json detailed_tmpl;
+	tmpl.get(NULL, type.c_str(), &detailed_tmpl);
 
-	ctx::json tempt;
-	for (int i = 0; template_map[name].get_array_elem(NULL, json_key.c_str(), i, &tempt); i++) {
-		std::string k;
-		tempt.get(NULL, KEY_KEY, &k);
+	std::string dt;
+	bool ret = detailed_tmpl.get(key.c_str(), KEY_TYPE, &dt);
+	IF_FAIL_RETURN(ret, "");
 
-		if (key == k) {
-			std::string dt;
-			tempt.get(NULL, KEY_TYPE, &dt);
-			return dt;
-		}
-	}
-
-	return "";
+	return dt;
 }
 
 // called by context_trigger_rule_add_entry()
@@ -386,7 +358,7 @@ bool ctx::rule_validator::check_referential_data(std::string name, ctx::json& re
 		ref_data.get(NULL, KEY_TYPE, &cond_type);
 
 		if (type_map.count(ref_key) == 0) {
-			type_map[ref_key] = get_data_type(TYPE_ATTR, name, ref_key); // -1, if invalid key
+			type_map[ref_key] = get_data_type(TYPE_ATTR_STR, name, ref_key); // "", if invalid key
 		}
 
 		// Err: Invalid key or Value type not matched
@@ -401,7 +373,7 @@ bool ctx::rule_validator::check_referential_data(std::string name, ctx::json& re
 		ref_data.get(NULL, KEY_TYPE, &cond_type);
 
 		if (type_map.count(ref_key) == 0) {
-			type_map[ref_key] = get_data_type(TYPE_ATTR, name, ref_key); // -1, if invalid key
+			type_map[ref_key] = get_data_type(TYPE_ATTR_STR, name, ref_key); // "", if invalid key
 		}
 
 		// Err: Invalid key or Value type not matched

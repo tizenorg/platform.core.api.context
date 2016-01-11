@@ -23,6 +23,7 @@
 #define CONTEXT_TRIGGER_SUBJECT_DISABLE "trigger/disable"
 #define CONTEXT_TRIGGER_SUBJECT_GET "trigger/get"
 #define CONTEXT_TRIGGER_SUBJECT_GET_RULE_IDS "trigger/get_rule_ids"
+#define CONTEXT_TRIGGER_SUBJECT_GET_TEMPLATE "trigger/tepmlate/get"
 
 #define CT_RULE_ARRAY_ENABLED "ARRAY_ENABLED"
 #define CT_RULE_ARRAY_DISABLED "ARRAY_DISABLED"
@@ -96,15 +97,13 @@
 #define TYPE_EVENT 1
 #define TYPE_CONDITION 2
 
-#define TYPE_OPTION 1
-#define TYPE_ATTR 2
-
 #define TYPE_INT_STR "integer"
 #define TYPE_STRING_STR "string"
 #define TYPE_DOUBLE_STR "double"
 
-#define TYPE_OPTION_STR "option"
+#define TYPE_OPTION_STR "options"
 #define TYPE_ATTR_STR "attributes"
+#define SUBJECT_STR "subject"
 
 
 #endif /* __TIZEN_CONTEXT_CONTEXT_TRIGGER_TYPES_INTERNAL_H__ */

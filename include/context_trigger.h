@@ -883,6 +883,7 @@ int context_trigger_rule_get_description(context_trigger_rule_h rule, char** des
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event contained
  *
  * @see			context_trigger_rule_entry_destroy()
  */
@@ -917,6 +918,7 @@ int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, 
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported condition contained
  *
  * @see			context_trigger_rule_entry_destroy()
  */
