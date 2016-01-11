@@ -765,12 +765,11 @@ EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_
 	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR, name, key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	int type = ctx::rule_validator::get_data_type(TYPE_ATTR, name, key);
-	std::string type_str = (type == TYPE_INT)? "int" : "string";
+	std::string type = ctx::rule_validator::get_data_type(TYPE_ATTR, name, key);
 
 	int error;
 	std::string converted_op;
-	error = convert_operator(type_str, op, &converted_op);	// Err: Invalid operator
+	error = convert_operator(type, op, &converted_op);	// Err: Invalid operator
 	if (error != ERR_NONE){
 		return error;
 	}
@@ -800,7 +799,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_en
 	bool ret = ctx::rule_validator::check_comparison_int(name, key, op, value);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = convert_operator("int", op, &converted_op);	// Err: Invalid operator
+	error = convert_operator(TYPE_INT_STR, op, &converted_op);	// Err: Invalid operator
 	if (error != ERR_NONE){
 		return error;
 	}
@@ -839,7 +838,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule
 	bool ret = ctx::rule_validator::check_comparison_string(name, key, op, value);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = convert_operator("string", op, &converted_op);	// Err: Invalid operator
+	error = convert_operator(TYPE_STRING_STR, op, &converted_op);	// Err: Invalid operator
 	if (error != ERR_NONE){
 		return error;
 	}
@@ -981,7 +980,7 @@ int convert_operator(std::string type, std::string op, std::string* converted_op
 		return CONTEXT_TRIGGER_ERROR_NONE;
 	}
 
-	if (type.compare("int") == 0 || type.compare("double") == 0) {
+	if (type.compare(TYPE_INT_STR) == 0 || type.compare(TYPE_DOUBLE_STR) == 0) {
 		if (op.compare("<") == 0 || op.compare("<=") == 0 || op.compare(">") == 0 || op.compare(">=") == 0) {
 			*converted_op = op;
 			return CONTEXT_TRIGGER_ERROR_NONE;
