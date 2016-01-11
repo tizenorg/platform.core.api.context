@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <sstream>
+//#include <sstream>
 //#include <iomanip>
 #include <types_internal.h>
 #include <json.h>
@@ -32,7 +32,6 @@
 #define INITIAL_RULE "{ \"ID\" : -1, \"DESCRIPTION\" : \"\", \"DETAILS\" : {  } }"
 #define INITIAL_ENTRY "{ \"DATA_ARR\" : [ ] }"
 #define INITIAL_REF "{ \"option\" : [ ], \"attributes\" : [ ] }"
-#define QUOTATION_MARK_STRING std::string("\"")
 #define EVENT_DATA_KEY_PREFIX_STR std::string("?")
 //#define DOUBLE_PRECISION 2
 
@@ -40,7 +39,7 @@ static std::string convert_event_to_string(context_trigger_event_e item);
 static std::string convert_condition_to_string(context_trigger_condition_e item);
 static std::string convert_logical_type_to_string(context_trigger_logical_type_e logical_type);
 static int convert_operator(std::string type, std::string op, std::string* converted_op);
-static std::string int_to_string(int value);
+//static std::string int_to_string(int value);
 //static std::string double_to_string(int value);
 
 typedef struct _context_trigger_rule_s {
@@ -728,7 +727,7 @@ EXTAPI int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-static int context_trigger_rule_entry_add_comparison_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, std::string value)
+static int context_trigger_rule_entry_add_comparison_string_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, std::string value)
 {
 	ctx::json elem;
 	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
@@ -747,6 +746,36 @@ static int context_trigger_rule_entry_add_comparison_internal(context_trigger_ru
 				}
 			}
 			elem.array_append(NULL, CT_RULE_DATA_VALUE_ARR, value.c_str());
+			elem.array_append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
+			(entry->jentry).array_set_at(NULL, CT_RULE_DATA_ARR, i, elem);
+
+			return CONTEXT_TRIGGER_ERROR_NONE;
+		}
+	}
+
+	// Comparison key not exist
+	return CONTEXT_TRIGGER_ERROR_NO_DATA;
+}
+
+static int context_trigger_rule_entry_add_comparison_int_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, int value)
+{
+	ctx::json elem;
+	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
+		std::string elem_item;
+		elem.get(NULL, CT_RULE_DATA_KEY, &elem_item);
+
+		if (elem_item.compare(key) == 0) {
+			int elem_val;
+			std::string elem_op;
+			for (int j = 0; elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_ARR, j, &elem_val); j++) {
+				elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, j, &elem_op);
+
+				// Err: Duplicated <operator, value>
+				if (elem_val == value && elem_op.compare(op) == 0) {
+					return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
+				}
+			}
+			elem.array_append(NULL, CT_RULE_DATA_VALUE_ARR, value);
 			elem.array_append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
 			(entry->jentry).array_set_at(NULL, CT_RULE_DATA_ARR, i, elem);
 
@@ -785,7 +814,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_
 		return error;
 	}
 
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
+	error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, converted_op, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
 	if (error != ERR_NONE)
 		return error;
 
@@ -815,7 +844,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_en
 		return error;
 	}
 
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, int_to_string(value));
+	error = context_trigger_rule_entry_add_comparison_int_internal(entry, key, converted_op, value);
 	return error;
 }
 /*
@@ -854,7 +883,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule
 		return error;
 	}
 
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, QUOTATION_MARK_STRING + value + QUOTATION_MARK_STRING);
+	error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, converted_op, value);
 	return error;
 }
 
@@ -1000,14 +1029,14 @@ int convert_operator(std::string type, std::string op, std::string* converted_op
 
 	return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 }
-
+/*
 std::string int_to_string(int value)
 {
 	std::ostringstream ostr;
 	ostr << value;
 	return ostr.str();
 }
-/*
+
 std::string double_to_string(int value)
 {
 	std::ostringstream ostr;
