@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <sstream>
+//#include <sstream>
 //#include <iomanip>
 #include <types_internal.h>
 #include <json.h>
@@ -32,15 +32,13 @@
 #define INITIAL_RULE "{ \"ID\" : -1, \"DESCRIPTION\" : \"\", \"DETAILS\" : {  } }"
 #define INITIAL_ENTRY "{ \"DATA_ARR\" : [ ] }"
 #define INITIAL_REF "{ \"option\" : [ ], \"attributes\" : [ ] }"
-#define QUOTATION_MARK_STRING std::string("\"")
 #define EVENT_DATA_KEY_PREFIX_STR std::string("?")
 //#define DOUBLE_PRECISION 2
 
 static std::string convert_event_to_string(context_trigger_event_e item);
 static std::string convert_condition_to_string(context_trigger_condition_e item);
 static std::string convert_logical_type_to_string(context_trigger_logical_type_e logical_type);
-static int convert_operator(std::string type, std::string op, std::string* converted_op);
-static std::string int_to_string(int value);
+//static std::string int_to_string(int value);
 //static std::string double_to_string(int value);
 
 typedef struct _context_trigger_rule_s {
@@ -534,6 +532,9 @@ EXTAPI int context_trigger_rule_event_create(context_trigger_event_e event_item,
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
+	int error = ctx::rule_validator::request_template(eitem_str);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to request template: %#x", error);
+
 	*entry = new(std::nothrow) _context_trigger_rule_entry_h(TYPE_EVENT);
 	(*entry)->jentry.set(NULL, CT_RULE_EVENT_ITEM, eitem_str);
 	(*entry)->jentry.set(NULL, CT_RULE_EVENT_OPERATOR, logical_str);
@@ -546,11 +547,6 @@ EXTAPI int context_trigger_rule_event_is_supported(context_trigger_event_e event
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(supported);
-
-	if (event_item == CONTEXT_TRIGGER_EVENT_TIME) {
-		*supported = true;
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	}
 
 	*supported = false;
 
@@ -586,6 +582,9 @@ EXTAPI int context_trigger_rule_condition_create(context_trigger_condition_e con
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
+	int error = ctx::rule_validator::request_template(citem_str);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to request template: %#x", error);
+
 	*entry = new(std::nothrow) _context_trigger_rule_entry_h(TYPE_CONDITION);
 	(*entry)->jentry.set(NULL, CT_RULE_CONDITION_ITEM, citem_str);
 	(*entry)->jentry.set(NULL, CT_RULE_CONDITION_OPERATOR, logical_str);
@@ -598,11 +597,6 @@ EXTAPI int context_trigger_rule_condition_is_supported(context_trigger_condition
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(supported);
-
-	if (condition_item == CONTEXT_TRIGGER_CONDITION_TIME) {
-		*supported = true;
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	}
 
 	*supported = false;
 
@@ -682,11 +676,11 @@ EXTAPI int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h en
 	(entry->jentry).get(NULL, CT_RULE_CONDITION_ITEM, &name);
 
 	// Err: Check if key is valid
-	bool ret = ctx::rule_validator::check_valid_key(TYPE_OPTION, name, option_key);
+	bool ret = ctx::rule_validator::check_valid_key(TYPE_OPTION_STR, name, option_key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
 	// Set reference information
-	ret = ctx::rule_validator::set_ref_info(TYPE_OPTION, &(entry->jref), name, option_key, event_data_key);
+	ret = ctx::rule_validator::set_ref_info(TYPE_OPTION_STR, &(entry->jref), name, option_key, event_data_key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_OPERATION_FAILED);
 
 	(entry->jentry).set(CT_RULE_CONDITION_OPTION, option_key, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
@@ -707,7 +701,7 @@ EXTAPI int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry
 	// Err: Check if key is valid
 	std::string name;
 	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
-	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR, name, key);
+	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR_STR, name, key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
 	ctx::json elem;
@@ -728,7 +722,7 @@ EXTAPI int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-static int context_trigger_rule_entry_add_comparison_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, std::string value)
+static int context_trigger_rule_entry_add_comparison_string_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, std::string value)
 {
 	ctx::json elem;
 	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
@@ -758,6 +752,36 @@ static int context_trigger_rule_entry_add_comparison_internal(context_trigger_ru
 	return CONTEXT_TRIGGER_ERROR_NO_DATA;
 }
 
+static int context_trigger_rule_entry_add_comparison_int_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, int value)
+{
+	ctx::json elem;
+	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
+		std::string elem_item;
+		elem.get(NULL, CT_RULE_DATA_KEY, &elem_item);
+
+		if (elem_item.compare(key) == 0) {
+			int elem_val;
+			std::string elem_op;
+			for (int j = 0; elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_ARR, j, &elem_val); j++) {
+				elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, j, &elem_op);
+
+				// Err: Duplicated <operator, value>
+				if (elem_val == value && elem_op.compare(op) == 0) {
+					return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
+				}
+			}
+			elem.array_append(NULL, CT_RULE_DATA_VALUE_ARR, value);
+			elem.array_append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
+			(entry->jentry).array_set_at(NULL, CT_RULE_DATA_ARR, i, elem);
+
+			return CONTEXT_TRIGGER_ERROR_NONE;
+		}
+	}
+
+	// Comparison key not exist
+	return CONTEXT_TRIGGER_ERROR_NO_DATA;
+}
+
 EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry, const char* key, const char* op, const char* event_data_key)
 {
 	_D("BEGIN");
@@ -772,25 +796,19 @@ EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_
 	(entry->jentry).get(NULL, CT_RULE_CONDITION_ITEM, &name);
 
 	// Err: Check if key is valid
-	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR, name, key);
+	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR_STR, name, key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	int type = ctx::rule_validator::get_data_type(TYPE_ATTR, name, key);
-	std::string type_str = (type == TYPE_INT)? "int" : "string";
+	// Err: Invalid operator
+	std::string type = ctx::rule_validator::get_data_type(TYPE_ATTR_STR, name, key);
+	ret = ctx::rule_validator::is_valid_operator(type, op);
+	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	int error;
-	std::string converted_op;
-	error = convert_operator(type_str, op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
-
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
-	if (error != ERR_NONE)
-		return error;
+	int error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, op, EVENT_DATA_KEY_PREFIX_STR + std::string(event_data_key));
+	IF_FAIL_RETURN(error == ERR_NONE, error);
 
 	// Set reference information
-	ret = ctx::rule_validator::set_ref_info(TYPE_ATTR, &(entry->jref), name, key, event_data_key);
+	ret = ctx::rule_validator::set_ref_info(TYPE_ATTR_STR, &(entry->jref), name, key, event_data_key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_OPERATION_FAILED);
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
@@ -801,37 +819,29 @@ EXTAPI int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_en
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op);
 
-	int error;
-	std::string converted_op;
-
 	std::string name;
 	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
 
 	bool ret = ctx::rule_validator::check_comparison_int(name, key, op, value);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = convert_operator("int", op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
-
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, int_to_string(value));
+	int error = context_trigger_rule_entry_add_comparison_int_internal(entry, key, op, value);
 	return error;
 }
 /*
 EXTAPI int context_trigger_rule_entry_add_comparison_double(context_trigger_rule_entry_h entry, const char* key, const char* op, double value)
 {
+	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op);
 
-	int error;
-	std::string converted_op;
+	std::string name;
+	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
 
-	error = convert_operator("double", op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
+	// TODO: check_comparison_double()
+	bool ret = ctx::rule_validator::check_comparison_double(name, key, op, value);
+	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, double_to_string(value));
+	int error = context_trigger_rule_entry_add_comparison_internal(entry, key, op, double_to_string(value));
 	return error;
 }
 */
@@ -840,21 +850,13 @@ EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op && value);
 
-	int error;
-	std::string converted_op;
-
 	std::string name;
 	(entry->jentry).get(NULL, CT_RULE_EVENT_ITEM, &name);
 
 	bool ret = ctx::rule_validator::check_comparison_string(name, key, op, value);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	error = convert_operator("string", op, &converted_op);	// Err: Invalid operator
-	if (error != ERR_NONE){
-		return error;
-	}
-
-	error = context_trigger_rule_entry_add_comparison_internal(entry, key, converted_op, QUOTATION_MARK_STRING + value + QUOTATION_MARK_STRING);
+	int error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, op, value);
 	return error;
 }
 
@@ -981,33 +983,14 @@ std::string convert_logical_type_to_string(context_trigger_logical_type_e logica
 	return str;
 }
 
-int convert_operator(std::string type, std::string op, std::string* converted_op)
-{
-	if (op.compare("==") == 0) {
-		*converted_op = "eq";
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	} else if(op.compare("!=") == 0) {
-		*converted_op = "neq";
-		return CONTEXT_TRIGGER_ERROR_NONE;
-	}
-
-	if (type.compare("int") == 0 || type.compare("double") == 0) {
-		if (op.compare("<") == 0 || op.compare("<=") == 0 || op.compare(">") == 0 || op.compare(">=") == 0) {
-			*converted_op = op;
-			return CONTEXT_TRIGGER_ERROR_NONE;
-		}
-	}
-
-	return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
-}
-
+/*
 std::string int_to_string(int value)
 {
 	std::ostringstream ostr;
 	ostr << value;
 	return ostr.str();
 }
-/*
+
 std::string double_to_string(int value)
 {
 	std::ostringstream ostr;
