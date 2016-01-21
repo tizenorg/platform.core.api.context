@@ -24,6 +24,9 @@
 #define CONTEXT_TRIGGER_SUBJECT_GET "trigger/get"
 #define CONTEXT_TRIGGER_SUBJECT_GET_RULE_IDS "trigger/get_rule_ids"
 #define CONTEXT_TRIGGER_SUBJECT_GET_TEMPLATE "trigger/tepmlate/get"
+#define CONTEXT_TRIGGER_SUBJECT_CUSTOM_ADD "custom/add"
+#define CONTEXT_TRIGGER_SUBJECT_CUSTOM_REMOVE "custom/remove"
+#define CONTEXT_TRIGGER_SUBJECT_CUSTOM_PUBLISH "custom/publish"
 
 #define CT_RULE_ARRAY_ENABLED "ARRAY_ENABLED"
 #define CT_RULE_ARRAY_DISABLED "ARRAY_DISABLED"
@@ -94,6 +97,18 @@
 #define CT_CONDITION_MUSIC_PLAYBACK_FREQUENCY "stats/music/frequency"
 #define CT_CONDITION_VIDEO_PLAYBACK_FREQUENCY "stats/video/frequency"
 
+#define CT_CUSTOM_NAME "name"
+#define CT_CUSTOM_ATTRIBUTES "attributes"
+#define CT_CUSTOM_FACT "fact"
+#define CT_CUSTOM_TYPE "type"
+#define CT_CUSTOM_INT "integer"
+#define CT_CUSTOM_STRING "string"
+#define CT_CUSTOM_MIN "min"
+#define CT_CUSTOM_MAX "max"
+#define CT_CUSTOM_VALUES "values"
+#define CT_CUSTOM_SUBJECT "subject"
+#define CT_CUSTOM_DELIMITER std::string("::")
+
 #define TYPE_EVENT 1
 #define TYPE_CONDITION 2
 
@@ -104,6 +119,5 @@
 #define TYPE_OPTION_STR "options"
 #define TYPE_ATTR_STR "attributes"
 #define SUBJECT_STR "subject"
-
 
 #endif /* __TIZEN_CONTEXT_CONTEXT_TRIGGER_TYPES_INTERNAL_H__ */

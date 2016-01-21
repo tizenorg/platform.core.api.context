@@ -35,6 +35,8 @@
 #define EVENT_DATA_KEY_PREFIX_STR std::string("?")
 //#define DOUBLE_PRECISION 2
 
+static int context_trigger_rule_event_create_internal(const char* event_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry, bool is_custom = false);
+static int context_trigger_rule_condition_create_internal(const char* condition_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry, bool is_custom = false);
 static std::string convert_event_to_string(context_trigger_event_e item);
 static std::string convert_condition_to_string(context_trigger_condition_e item);
 static std::string convert_logical_type_to_string(context_trigger_logical_type_e logical_type);
@@ -527,16 +529,43 @@ EXTAPI int context_trigger_rule_event_create(context_trigger_event_e event_item,
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
+	int error = context_trigger_rule_event_create_internal(eitem_str.c_str(), logical_type, entry);
+	return error;
+}
+
+EXTAPI int context_trigger_rule_custom_event_create(const char* event_item, const char* provider, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(event_item && provider && entry);
+
+	// Err: Invalid provider
+	pkgmgrinfo_pkginfo_h pkg_info;
+	int error = pkgmgrinfo_pkginfo_get_usr_pkginfo(provider, getuid(), &pkg_info);
+	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_info);
+	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "No such package");
+
+	std::string subject = provider + CT_CUSTOM_DELIMITER + event_item;
+	error = context_trigger_rule_event_create_internal(subject.c_str(), logical_type, entry, true);
+
+	return error;
+}
+
+int context_trigger_rule_event_create_internal(const char* event_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry, bool is_custom)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(event_item);
+
+	// Err: Invalid logical operator
 	std::string logical_str = convert_logical_type_to_string(logical_type);
 	if (logical_str.empty()) {
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
-	int error = ctx::rule_validator::request_template(eitem_str);
+	int error = ctx::rule_validator::request_template(event_item, is_custom);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to request template: %#x", error);
 
 	*entry = new(std::nothrow) _context_trigger_rule_entry_h(TYPE_EVENT);
-	(*entry)->jentry.set(NULL, CT_RULE_EVENT_ITEM, eitem_str);
+	(*entry)->jentry.set(NULL, CT_RULE_EVENT_ITEM, event_item);
 	(*entry)->jentry.set(NULL, CT_RULE_EVENT_OPERATOR, logical_str);
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
@@ -577,16 +606,41 @@ EXTAPI int context_trigger_rule_condition_create(context_trigger_condition_e con
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
+	int error = context_trigger_rule_condition_create_internal(citem_str.c_str(), logical_type, entry);
+	return error;
+}
+
+EXTAPI int context_trigger_rule_custom_condition_create(const char* condition_item, const char* provider, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(condition_item && provider && entry);
+
+	// Err: Invalid provider
+	pkgmgrinfo_pkginfo_h pkg_info;
+	int error = pkgmgrinfo_pkginfo_get_usr_pkginfo(provider, getuid(), &pkg_info);
+	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_info);
+	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "No such package");
+
+	std::string subject = provider + CT_CUSTOM_DELIMITER + condition_item;
+	error = context_trigger_rule_condition_create_internal(subject.c_str(), logical_type, entry, true);
+	return error;
+}
+
+int context_trigger_rule_condition_create_internal(const char* condition_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry, bool is_custom)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(condition_item);
+
 	std::string logical_str = convert_logical_type_to_string(logical_type);
 	if (logical_str.empty()) {
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
-	int error = ctx::rule_validator::request_template(citem_str);
+	int error = ctx::rule_validator::request_template(condition_item, is_custom);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to request template: %#x", error);
 
 	*entry = new(std::nothrow) _context_trigger_rule_entry_h(TYPE_CONDITION);
-	(*entry)->jentry.set(NULL, CT_RULE_CONDITION_ITEM, citem_str);
+	(*entry)->jentry.set(NULL, CT_RULE_CONDITION_ITEM, condition_item);
 	(*entry)->jentry.set(NULL, CT_RULE_CONDITION_OPERATOR, logical_str);
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
@@ -857,6 +911,67 @@ EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
 	int error = context_trigger_rule_entry_add_comparison_string_internal(entry, key, op, value);
+	return error;
+}
+
+EXTAPI int context_trigger_add_custom_item(const char* name, const char* attr_template)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(name && attr_template);
+
+	// Err: Invalid json
+	ctx::json jattr_template = attr_template;
+	IF_FAIL_RETURN_TAG(jattr_template.valid(), CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER, _E, "Failed to parse template");
+
+	// Err: Invalid template
+	bool ret = ctx::rule_validator::is_valid_template(jattr_template);
+	IF_FAIL_RETURN_TAG(ret, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "Invalid template");
+
+	ctx::json data;
+	data.set(NULL, CT_CUSTOM_NAME, name);
+	data.set(NULL, CT_CUSTOM_ATTRIBUTES, jattr_template);
+
+	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_ADD, &data, NULL);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to add custom item: %#x", error);
+
+	return error;
+}
+
+EXTAPI int context_trigger_remove_custom_item(const char* name)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(name);
+
+	ctx::json data;
+	data.set(NULL, CT_CUSTOM_NAME, name);
+
+	ctx::json subj;
+	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_REMOVE, &data, &subj);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to remove custom item: %#x", error);
+
+	std::string subject;
+	subj.get(NULL, CT_CUSTOM_SUBJECT, &subject);
+	ctx::rule_validator::remove_template(subject);
+
+	return error;
+}
+
+EXTAPI int context_trigger_publish_custom_item(const char* name, const char* fact)
+{
+	_D("BEGIN");
+	ASSERT_NOT_NULL(name && fact);
+
+	// Err: Invalid json
+	ctx::json jfact = fact;
+	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact json" );
+
+	ctx::json data;
+	data.set(NULL, CT_CUSTOM_NAME, name);
+	data.set(NULL, CT_CUSTOM_FACT, jfact);
+
+	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_PUBLISH, &data, NULL);
+	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to publish custom data");
+
 	return error;
 }
 
