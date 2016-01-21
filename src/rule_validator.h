@@ -22,7 +22,8 @@
 namespace ctx {
 	namespace rule_validator {
 
-		int request_template(std::string name);
+		int request_template(std::string name, bool mandatory = false);
+		void remove_template(std::string name);
 		bool check_option(ctx::json &item);
 		bool check_option_int(std::string name, std::string key, int value);
 		bool check_option_string(std::string name, std::string key, std::string value);
@@ -36,6 +37,7 @@ namespace ctx {
 		bool check_referential_data(std::string name, ctx::json &ref_info);
 		bool is_valid_operator(std::string type, std::string op);
 
+		bool is_valid_template(ctx::json& attr_template);
 	}
 }	/* namespace ctx */
 

@@ -59,10 +59,12 @@ ctx::json get_template(std::string name)
 	return template_map[name];
 }
 
-int ctx::rule_validator::request_template(std::string name)
+int ctx::rule_validator::request_template(std::string name, bool mandatory)
 {
-	template_map_t::iterator it = template_map.find(name);
-	IF_FAIL_RETURN(it == template_map.end(), ERR_NONE);
+	if (!mandatory) {
+		template_map_t::iterator it = template_map.find(name);
+		IF_FAIL_RETURN(it == template_map.end(), ERR_NONE);
+	}
 
 	// Request template
 	ctx::json request;
@@ -71,11 +73,27 @@ int ctx::rule_validator::request_template(std::string name)
 	int req_id;
 	ctx::json tmpl;
 	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET_TEMPLATE, &request, &req_id, &tmpl);
+	if (error == ERR_NOT_SUPPORTED) {
+		template_map_t::iterator it = template_map.find(name);
+		if (it != template_map.end()) {
+			template_map.erase(it);
+		}
+		_E("Failed to get request: not supported");
+		return ERR_NOT_SUPPORTED;
+	}
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get request");
 
 	template_map[name] = tmpl;
 
 	return ERR_NONE;
+}
+
+void ctx::rule_validator::remove_template(std::string name)
+{
+	template_map_t::iterator it = template_map.find(name);
+	if (it != template_map.end()) {
+		template_map.erase(it);
+	}
 }
 
 // called by context_trigger_rule_add_entry()
@@ -398,4 +416,54 @@ bool ctx::rule_validator::is_valid_operator(std::string type, std::string op)
 	}
 
 	return false;
+}
+
+// For custom item template
+bool ctx::rule_validator::is_valid_template(ctx::json& attr_template)
+{
+	IF_FAIL_RETURN_TAG(attr_template != EMPTY_JSON_OBJECT, false, _E, "Custom template: empty json");
+
+	bool ret;
+	std::list<std::string> keys;
+	attr_template.get_keys(&keys);
+
+	for (std::list<std::string>::iterator it = keys.begin(); it != keys.end(); it++) {
+		std::string key = *it;
+
+		std::string type;
+		ret = attr_template.get(key.c_str(), CT_CUSTOM_TYPE, &type);
+		IF_FAIL_RETURN_TAG(ret, false, _E, "Custom template: type missing");
+		IF_FAIL_RETURN_TAG(type == CT_CUSTOM_INT || type == CT_CUSTOM_STRING, false, _E, "Custom template: invalid data type");
+
+		ctx::json elem;
+		attr_template.get(NULL, key.c_str(), &elem);
+		std::list<std::string> elem_keys;
+		elem.get_keys(&elem_keys);
+
+		for (std::list<std::string>::iterator it2 = elem_keys.begin(); it2 != elem_keys.end(); it2++) {
+			std::string elem_key = *it2;
+			if (elem_key == CT_CUSTOM_MIN || elem_key == CT_CUSTOM_MAX) {
+				IF_FAIL_RETURN_TAG(type == CT_CUSTOM_INT, false, _E, "Custom template: integer type support min, max");
+
+				int val;
+				ret = attr_template.get(key.c_str(), elem_key.c_str(), &val);
+				IF_FAIL_RETURN_TAG(ret, false, _E, "Custom template: failed to get integer type value");
+			} else if (elem_key == CT_CUSTOM_VALUES) {
+				IF_FAIL_RETURN_TAG(type == CT_CUSTOM_STRING, false, _E, "Custom template: string type support values");
+
+				int size = attr_template.array_get_size(key.c_str(), CT_CUSTOM_VALUES);
+				if (size > 0) {
+					std::string val_str;
+					for (int i = 0; i < size; i++) {
+						ret = attr_template.get_array_elem(key.c_str(), CT_CUSTOM_VALUES, i, &val_str);
+						IF_FAIL_RETURN_TAG(ret, false, _E, "Custom template: failed to get string type value");
+					}
+				}
+			} else {
+				IF_FAIL_RETURN_TAG(elem_key == CT_CUSTOM_TYPE, false, _E, "Custom template: invalid key");
+			}
+		}
+	}
+
+	return true;
 }
