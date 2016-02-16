@@ -9,10 +9,10 @@ Source0:    %{name}-%{version}.tar.gz
 %define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
 
 BuildRequires: cmake
+BuildRequires: pkgconfig(libcontext-shared)
 BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
-BuildRequires: pkgconfig(context-common)
 BuildRequires: pkgconfig(pkgmgr-info)
 
 %description

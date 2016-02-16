@@ -10,7 +10,7 @@ FILE(GLOB_RECURSE SRCS src/*.cpp)
 MESSAGE("Sources: ${SRCS}")
 
 # Dependencies
-SET(DEPS "aul bundle capi-appfw-app-control context-common pkgmgr-info")
+SET(DEPS "libcontext-shared aul bundle capi-appfw-app-control pkgmgr-info")
 
 # Common Options
 INCLUDE(FindPkgConfig)
