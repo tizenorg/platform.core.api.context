@@ -25,7 +25,7 @@
 #include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
 #include <pkgmgr-info.h>
-#include <request_handler.h>
+#include "request_handler.h"
 #include "rule_validator.h"
 #include "priv_util.h"
 

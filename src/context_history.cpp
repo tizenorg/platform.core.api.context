@@ -16,9 +16,9 @@
 
 #include <map>
 #include <json.h>
-#include <request_handler.h>
 #include <context_history.h>
 #include <context_history_types_internal.h>
+#include "request_handler.h"
 
 #define TYPE_INT 0
 #define TYPE_STRING 1
