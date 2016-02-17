@@ -20,7 +20,7 @@
 #include <types_internal.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
-#include <request_handler.h>
+#include "request_handler.h"
 #include "rule_validator.h"
 
 #define KEY_TEMPLATE "templates"
