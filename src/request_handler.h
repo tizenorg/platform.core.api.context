@@ -17,13 +17,13 @@
 #ifndef __CONTEXT_LIB_REQUEST_HANDLER_H__
 #define __CONTEXT_LIB_REQUEST_HANDLER_H__
 
-#include <json.h>
+#include <Json.h>
 
 namespace ctx { namespace request_handler {
 
 	/*
 	 */
-	typedef void(* subject_response_cb)(const char* subject, int req_id, int error, ctx::json response);
+	typedef void(* subject_response_cb)(const char* subject, int req_id, int error, ctx::Json response);
 
 	/*
 	 */
@@ -31,7 +31,7 @@ namespace ctx { namespace request_handler {
 
 	/*
 	 */
-	int subscribe(const char* subject, ctx::json* option, int* req_id, ctx::json* request_result = NULL);
+	int subscribe(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result = NULL);
 
 	/*
 	 */
@@ -39,19 +39,19 @@ namespace ctx { namespace request_handler {
 
 	/*
 	 */
-	int read(const char* subject, ctx::json* option, int* req_id, ctx::json* request_result = NULL);
+	int read(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result = NULL);
 
 	/*
 	 */
-	int read_sync(const char* subject, ctx::json* option, int* req_id, ctx::json* data_read);
+	int read_sync(const char* subject, ctx::Json* option, int* req_id, ctx::Json* data_read);
 
 	/*
 	 */
-	int write(const char* subject, ctx::json* data);
+	int write(const char* subject, ctx::Json* data);
 
 	/*
 	 */
-	int write_with_reply(const char* subject, ctx::json* data, ctx::json* request_result = NULL);
+	int write_with_reply(const char* subject, ctx::Json* data, ctx::Json* request_result = NULL);
 
 	/*
 	 */

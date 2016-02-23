@@ -223,7 +223,7 @@ int DBusClient::isSupported(std::string subject)
 	return __request(REQ_SUPPORT, __generateReqId(), subject.c_str(), NULL, NULL, NULL);
 }
 
-int DBusClient::subscribe(std::string subject, json option, int *reqId, json *result)
+int DBusClient::subscribe(std::string subject, Json option, int *reqId, Json *result)
 {
 	IF_FAIL_RETURN(__init(), ERR_OPERATION_FAILED);
 	ASSERT_NOT_NULL(reqId);
@@ -253,7 +253,7 @@ int DBusClient::unsubscribe(std::string subject, int reqId)
 	return __request(REQ_UNSUBSCRIBE, reqId, subject.c_str(), NULL, NULL, NULL);
 }
 
-int DBusClient::read(std::string subject, json option, int *reqId, json *result)
+int DBusClient::read(std::string subject, Json option, int *reqId, Json *result)
 {
 	IF_FAIL_RETURN(__init(), ERR_OPERATION_FAILED);
 	ASSERT_NOT_NULL(reqId);
@@ -274,7 +274,7 @@ int DBusClient::read(std::string subject, json option, int *reqId, json *result)
 	return error;
 }
 
-int DBusClient::readSync(std::string subject, json option, int *reqId, json *outputData)
+int DBusClient::readSync(std::string subject, Json option, int *reqId, Json *outputData)
 {
 	IF_FAIL_RETURN(__init(), ERR_OPERATION_FAILED);
 	ASSERT_NOT_NULL(reqId);
@@ -295,7 +295,7 @@ int DBusClient::readSync(std::string subject, json option, int *reqId, json *out
 	return error;
 }
 
-int DBusClient::write(std::string subject, json inputData)
+int DBusClient::write(std::string subject, Json inputData)
 {
 	IF_FAIL_RETURN(__init(), ERR_OPERATION_FAILED);
 
@@ -310,7 +310,7 @@ int DBusClient::write(std::string subject, json inputData)
 	return error;
 }
 
-int DBusClient::write(std::string subject, json inputData, json *result)
+int DBusClient::write(std::string subject, Json inputData, Json *result)
 {
 	IF_FAIL_RETURN(__init(), ERR_OPERATION_FAILED);
 

@@ -17,7 +17,7 @@
 //#include <sstream>
 //#include <iomanip>
 #include <types_internal.h>
-#include <json.h>
+#include <Json.h>
 #include <app_control_internal.h>
 #include <bundle.h>
 #include <bundle_internal.h>
@@ -44,8 +44,8 @@ static std::string convert_logical_type_to_string(context_trigger_logical_type_e
 //static std::string double_to_string(int value);
 
 typedef struct _context_trigger_rule_s {
-	ctx::json jrule;	// rule_id, description, details(event, condition[])
-	ctx::json jref;
+	ctx::Json jrule;	// rule_id, description, details(event, condition[])
+	ctx::Json jref;
 
 	_context_trigger_rule_s()
 	{
@@ -55,9 +55,9 @@ typedef struct _context_trigger_rule_s {
 } _context_trigger_rule_h;
 
 typedef struct _context_trigger_rule_entry_s {
-	ctx::json jentry;	// key, value, operator
+	ctx::Json jentry;	// key, value, operator
 	int type;
-	ctx::json jref;
+	ctx::Json jref;
 
 	_context_trigger_rule_entry_s(int t): type(t)
 	{
@@ -87,7 +87,7 @@ EXTAPI int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id)
 	if (!ret)
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 
-	ctx::json jrule_id;
+	ctx::Json jrule_id;
 	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_ADD, &(rule->jrule), &jrule_id);
 
 	if (error == ERR_NONE) {
@@ -105,7 +105,7 @@ EXTAPI int context_trigger_remove_rule(int rule_id)
 	if (rule_id <= 0)
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 
-	ctx::json jrule_id;
+	ctx::Json jrule_id;
 	jrule_id.set(NULL, CT_RULE_ID, rule_id);
 	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_REMOVE, &jrule_id, NULL);
 
@@ -125,7 +125,7 @@ EXTAPI int context_trigger_enable_rule(int rule_id)
 	if (rule_id <= 0)
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 
-	ctx::json jrule_id;
+	ctx::Json jrule_id;
 	jrule_id.set(NULL, CT_RULE_ID, rule_id);
 
 	int req_id;	// Useless in context_trigger
@@ -145,7 +145,7 @@ EXTAPI int context_trigger_disable_rule(int rule_id)
 	if (rule_id <= 0)
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 
-	ctx::json jrule_id;
+	ctx::Json jrule_id;
 	jrule_id.set(NULL, CT_RULE_ID, rule_id);
 	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_DISABLE, &jrule_id, NULL);
 
@@ -162,7 +162,7 @@ EXTAPI int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled
 	ASSERT_NOT_NULL(enabled_rule_ids && enabled_rule_count && disabled_rule_ids && disabled_rule_count);
 
 	int req_id;
-	ctx::json data_read;
+	ctx::Json data_read;
 	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET_RULE_IDS, NULL, &req_id, &data_read);
 
 	if (error != ERR_NONE) {
@@ -171,14 +171,14 @@ EXTAPI int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled
 
 	// Enabled rules
 	int* e_arr = NULL;
-	*enabled_rule_count = data_read.array_get_size(NULL, CT_RULE_ARRAY_ENABLED);
+	*enabled_rule_count = data_read.getSize(NULL, CT_RULE_ARRAY_ENABLED);
 
 	if (*enabled_rule_count > 0) {
 		e_arr = static_cast<int*>(g_malloc((*enabled_rule_count) * sizeof(int)));
 		IF_FAIL_RETURN_TAG(e_arr, CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY, _E, "Memory allocation failed");
 
 		int id;
-		for (int i = 0; data_read.get_array_elem(NULL, CT_RULE_ARRAY_ENABLED, i, &id); i++) {
+		for (int i = 0; data_read.getAt(NULL, CT_RULE_ARRAY_ENABLED, i, &id); i++) {
 			*(e_arr + i) = id;
 		}
 	}
@@ -186,14 +186,14 @@ EXTAPI int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled
 
 	// Disabled rules
 	int* d_arr = NULL;
-	*disabled_rule_count = data_read.array_get_size(NULL, CT_RULE_ARRAY_DISABLED);
+	*disabled_rule_count = data_read.getSize(NULL, CT_RULE_ARRAY_DISABLED);
 
 	if (*disabled_rule_count > 0) {
 		d_arr = static_cast<int*>(g_malloc((*disabled_rule_count) * sizeof(int)));
 		IF_FAIL_RETURN_TAG(d_arr, CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY, _E, "Memory allocation failed");
 
 		int id;
-		for (int i = 0; data_read.get_array_elem(NULL, CT_RULE_ARRAY_DISABLED, i, &id); i++) {
+		for (int i = 0; data_read.getAt(NULL, CT_RULE_ARRAY_DISABLED, i, &id); i++) {
 			*(d_arr + i) = id;
 		}
 	}
@@ -209,11 +209,11 @@ EXTAPI int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h* r
 	if (rule_id <= 0)
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CT_RULE_ID, rule_id);
 
 	int req_id;
-	ctx::json data_read;
+	ctx::Json data_read;
 	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET, &option, &req_id, &data_read);
 
 	if (error == ERR_NO_DATA) {
@@ -267,7 +267,7 @@ EXTAPI int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_t
 
 	if (entry->type == TYPE_EVENT) {
 		// Err: More than one event
-		ctx::json elem;
+		ctx::Json elem;
 		if ((rule->jrule).get(CT_RULE_DETAILS, CT_RULE_EVENT, &elem)) {
 			return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 		}
@@ -282,18 +282,18 @@ EXTAPI int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_t
 		ret = ctx::rule_validator::check_referential_data(ename, rule->jref);
 		IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-		ctx::json temp = (entry->jentry).str();
+		ctx::Json temp = (entry->jentry).str();
 		ret = (rule->jrule).set(CT_RULE_DETAILS, CT_RULE_EVENT, temp);
 	} else if (entry->type == TYPE_CONDITION) {
 		// Err: Condition without comparison data
-		if ((entry->jentry).array_get_size(NULL, CT_RULE_DATA_ARR) < 1) {
+		if ((entry->jentry).getSize(NULL, CT_RULE_DATA_ARR) < 1) {
 			return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 		}
 
-		ctx::json elem;
-		for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
-			int val_arr_size = elem.array_get_size(NULL, CT_RULE_DATA_VALUE_ARR);
-			int op_arr_size = elem.array_get_size(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR);
+		ctx::Json elem;
+		for (int i = 0; (entry->jentry).getAt(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
+			int val_arr_size = elem.getSize(NULL, CT_RULE_DATA_VALUE_ARR);
+			int op_arr_size = elem.getSize(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR);
 
 			// Err: Condition without comparison data
 			if (val_arr_size != op_arr_size || val_arr_size < 1 || op_arr_size < 1) {
@@ -313,19 +313,19 @@ EXTAPI int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_t
 				IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 			} else {
 				// If not, copy referential information to rule entry
-				ctx::json info;
-				for (int j = 0; (entry->jref).get_array_elem(NULL, TYPE_OPTION_STR, j, &info); j++) {
-					(rule->jref).array_append(NULL, TYPE_OPTION_STR, info);
+				ctx::Json info;
+				for (int j = 0; (entry->jref).getAt(NULL, TYPE_OPTION_STR, j, &info); j++) {
+					(rule->jref).append(NULL, TYPE_OPTION_STR, info);
 				}
 
-				for (int j = 0; (entry->jref).get_array_elem(NULL, TYPE_ATTR_STR, j, &info); j++) {
-					(rule->jref).array_append(NULL, TYPE_ATTR_STR, info);
+				for (int j = 0; (entry->jref).getAt(NULL, TYPE_ATTR_STR, j, &info); j++) {
+					(rule->jref).append(NULL, TYPE_ATTR_STR, info);
 				}
 			}
 		}
 
-		ctx::json temp = (entry->jentry).str();
-		ret = (rule->jrule).array_append(CT_RULE_DETAILS, CT_RULE_CONDITION, temp);
+		ctx::Json temp = (entry->jentry).str();
+		ret = (rule->jrule).append(CT_RULE_DETAILS, CT_RULE_CONDITION, temp);
 	} else {
 		// Entry is not created
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
@@ -758,8 +758,8 @@ EXTAPI int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry
 	bool ret = ctx::rule_validator::check_valid_key(TYPE_ATTR_STR, name, key);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
-	ctx::json elem;
-	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
+	ctx::Json elem;
+	for (int i = 0; (entry->jentry).getAt(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
 		std::string elem_item;
 		elem.get(NULL, CT_RULE_DATA_KEY, &elem_item);
 		// Err: Comparison key is already added
@@ -768,35 +768,35 @@ EXTAPI int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry
 		}
 	}
 
-	ctx::json data;
+	ctx::Json data;
 	data.set(NULL, CT_RULE_DATA_KEY, key);
 	data.set(NULL, CT_RULE_DATA_KEY_OPERATOR, logical_str);
-	(entry->jentry).array_append(NULL, CT_RULE_DATA_ARR, data);
+	(entry->jentry).append(NULL, CT_RULE_DATA_ARR, data);
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
 static int context_trigger_rule_entry_add_comparison_string_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, std::string value)
 {
-	ctx::json elem;
-	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
+	ctx::Json elem;
+	for (int i = 0; (entry->jentry).getAt(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
 		std::string elem_item;
 		elem.get(NULL, CT_RULE_DATA_KEY, &elem_item);
 
 		if (elem_item.compare(key) == 0) {
 			std::string elem_val;
 			std::string elem_op;
-			for (int j = 0; elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_ARR, j, &elem_val); j++) {
-				elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, j, &elem_op);
+			for (int j = 0; elem.getAt(NULL, CT_RULE_DATA_VALUE_ARR, j, &elem_val); j++) {
+				elem.getAt(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, j, &elem_op);
 
 				// Err: Duplicated <operator, value>
 				if (elem_val.compare(value) == 0 && elem_op.compare(op) == 0) {
 					return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 				}
 			}
-			elem.array_append(NULL, CT_RULE_DATA_VALUE_ARR, value.c_str());
-			elem.array_append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
-			(entry->jentry).array_set_at(NULL, CT_RULE_DATA_ARR, i, elem);
+			elem.append(NULL, CT_RULE_DATA_VALUE_ARR, value.c_str());
+			elem.append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
+			(entry->jentry).setAt(NULL, CT_RULE_DATA_ARR, i, elem);
 
 			return CONTEXT_TRIGGER_ERROR_NONE;
 		}
@@ -808,25 +808,25 @@ static int context_trigger_rule_entry_add_comparison_string_internal(context_tri
 
 static int context_trigger_rule_entry_add_comparison_int_internal(context_trigger_rule_entry_h entry, const char* key, std::string op, int value)
 {
-	ctx::json elem;
-	for (int i = 0; (entry->jentry).get_array_elem(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
+	ctx::Json elem;
+	for (int i = 0; (entry->jentry).getAt(NULL, CT_RULE_DATA_ARR, i, &elem); i++) {
 		std::string elem_item;
 		elem.get(NULL, CT_RULE_DATA_KEY, &elem_item);
 
 		if (elem_item.compare(key) == 0) {
 			int elem_val;
 			std::string elem_op;
-			for (int j = 0; elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_ARR, j, &elem_val); j++) {
-				elem.get_array_elem(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, j, &elem_op);
+			for (int j = 0; elem.getAt(NULL, CT_RULE_DATA_VALUE_ARR, j, &elem_val); j++) {
+				elem.getAt(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, j, &elem_op);
 
 				// Err: Duplicated <operator, value>
 				if (elem_val == value && elem_op.compare(op) == 0) {
 					return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 				}
 			}
-			elem.array_append(NULL, CT_RULE_DATA_VALUE_ARR, value);
-			elem.array_append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
-			(entry->jentry).array_set_at(NULL, CT_RULE_DATA_ARR, i, elem);
+			elem.append(NULL, CT_RULE_DATA_VALUE_ARR, value);
+			elem.append(NULL, CT_RULE_DATA_VALUE_OPERATOR_ARR, op);
+			(entry->jentry).setAt(NULL, CT_RULE_DATA_ARR, i, elem);
 
 			return CONTEXT_TRIGGER_ERROR_NONE;
 		}
@@ -919,15 +919,15 @@ EXTAPI int context_trigger_add_custom_item(const char* name, const char* attr_te
 	_D("BEGIN");
 	ASSERT_NOT_NULL(name && attr_template);
 
-	// Err: Invalid json
-	ctx::json jattr_template = attr_template;
+	// Err: Invalid Json
+	ctx::Json jattr_template = attr_template;
 	IF_FAIL_RETURN_TAG(jattr_template.valid(), CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER, _E, "Failed to parse template");
 
 	// Err: Invalid template
 	bool ret = ctx::rule_validator::is_valid_template(jattr_template);
 	IF_FAIL_RETURN_TAG(ret, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "Invalid template");
 
-	ctx::json data;
+	ctx::Json data;
 	data.set(NULL, CT_CUSTOM_NAME, name);
 	data.set(NULL, CT_CUSTOM_ATTRIBUTES, jattr_template);
 
@@ -942,10 +942,10 @@ EXTAPI int context_trigger_remove_custom_item(const char* name)
 	_D("BEGIN");
 	ASSERT_NOT_NULL(name);
 
-	ctx::json data;
+	ctx::Json data;
 	data.set(NULL, CT_CUSTOM_NAME, name);
 
-	ctx::json subj;
+	ctx::Json subj;
 	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_REMOVE, &data, &subj);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to remove custom item: %#x", error);
 
@@ -961,11 +961,11 @@ EXTAPI int context_trigger_publish_custom_item(const char* name, const char* fac
 	_D("BEGIN");
 	ASSERT_NOT_NULL(name && fact);
 
-	// Err: Invalid json
-	ctx::json jfact = fact;
-	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact json" );
+	// Err: Invalid Json
+	ctx::Json jfact = fact;
+	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact Json" );
 
-	ctx::json data;
+	ctx::Json data;
 	data.set(NULL, CT_CUSTOM_NAME, name);
 	data.set(NULL, CT_CUSTOM_FACT, jfact);
 

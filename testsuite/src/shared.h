@@ -22,7 +22,7 @@
 #include <string>
 #include <glib.h>
 #include <types_internal.h>
-#include <json.h>
+#include <Json.h>
 
 #define CALLBACK_COUNT 5
 
@@ -80,7 +80,7 @@ namespace ctx {
 		extern bool bool_val;
 		extern bool skip_tc;
 		extern bool newline_after_tcname;
-		extern ctx::json json_val;
+		extern ctx::Json json_val;
 		extern std::string str_val;
 
 		void start_mainloop();

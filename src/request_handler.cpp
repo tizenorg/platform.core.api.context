@@ -31,7 +31,7 @@ public:
 	DBusClientListenerImpl() {}
 	~DBusClientListenerImpl() {}
 	void setCb(std::string subject, request_handler::subject_response_cb cb);
-	void onPublish(std::string subject, int reqId, int error, json event);
+	void onPublish(std::string subject, int reqId, int error, Json event);
 private:
 	std::map<std::string, request_handler::subject_response_cb> __callbackMap;
 };
@@ -41,7 +41,7 @@ void DBusClientListenerImpl::setCb(std::string subject, request_handler::subject
 	__callbackMap[subject] = cb;
 }
 
-void DBusClientListenerImpl::onPublish(std::string subject, int reqId, int error, json event)
+void DBusClientListenerImpl::onPublish(std::string subject, int reqId, int error, Json event)
 {
 	auto it = __callbackMap.find(subject);
 	IF_FAIL_VOID_TAG(it != __callbackMap.end(), _W, "Unregistered subject");
@@ -51,7 +51,7 @@ void DBusClientListenerImpl::onPublish(std::string subject, int reqId, int error
 static DBusClientListenerImpl __dbusListener;
 static DBusClient __dbusClient;
 
-EXTAPI int ctx::request_handler::subscribe(const char* subject, ctx::json* option, int* req_id, ctx::json* request_result)
+EXTAPI int ctx::request_handler::subscribe(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result)
 {
 	return __dbusClient.subscribe(subject, option ? *option : NULL, req_id, request_result);
 }
@@ -61,22 +61,22 @@ EXTAPI int ctx::request_handler::unsubscribe(const char* subject, int req_id)
 	return __dbusClient.unsubscribe(subject, req_id);
 }
 
-EXTAPI int ctx::request_handler::read(const char* subject, ctx::json* option, int* req_id, ctx::json* request_result)
+EXTAPI int ctx::request_handler::read(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result)
 {
 	return __dbusClient.read(subject, option ? *option : NULL, req_id, request_result);
 }
 
-EXTAPI int ctx::request_handler::read_sync(const char* subject, ctx::json* option, int* req_id, ctx::json* data_read)
+EXTAPI int ctx::request_handler::read_sync(const char* subject, ctx::Json* option, int* req_id, ctx::Json* data_read)
 {
 	return __dbusClient.readSync(subject, option ? *option : NULL, req_id, data_read);
 }
 
-EXTAPI int ctx::request_handler::write(const char* subject, ctx::json* data)
+EXTAPI int ctx::request_handler::write(const char* subject, ctx::Json* data)
 {
 	return __dbusClient.write(subject, *data);
 }
 
-EXTAPI int ctx::request_handler::write_with_reply(const char* subject, ctx::json* data, ctx::json* request_result)
+EXTAPI int ctx::request_handler::write_with_reply(const char* subject, ctx::Json* data, ctx::Json* request_result)
 {
 	return __dbusClient.write(subject, *data, request_result);
 }

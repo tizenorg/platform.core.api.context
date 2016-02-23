@@ -23,7 +23,7 @@
 
 using namespace ctx::test;
 
-static void __domain_cb(const char *item, int rid, int error, ctx::json data)
+static void __domain_cb(const char *item, int rid, int error, ctx::Json data)
 {
 	g_print("[%d] %s: Error=%#x, Data=%s\n", callback_count--, item, error, data.str().c_str());
 
@@ -303,7 +303,7 @@ bool _trigger_event_place()
 {
 	if (!__support(CONTEXT_TRIGGER_EVENT_PLACE)) return false;
 
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_PLACE_ID, 2);	/* 2 => office */
 
 	err = ctx::request_handler::subscribe(CT_EVENT_PLACE, &option, &req_id, NULL);

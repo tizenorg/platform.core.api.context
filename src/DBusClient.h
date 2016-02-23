@@ -35,12 +35,12 @@ namespace ctx {
 
 		int isSupported(std::string subject);
 
-		int subscribe(std::string subject, json option, int *reqId, json *result);
+		int subscribe(std::string subject, Json option, int *reqId, Json *result);
 		int unsubscribe(std::string subject, int reqId);
-		int read(std::string subject, json option, int *reqId, json *result);
-		int readSync(std::string subject, json option, int *reqId, json *outputData);
-		int write(std::string subject, json inputData);
-		int write(std::string subject, json inputData, json *result);
+		int read(std::string subject, Json option, int *reqId, Json *result);
+		int readSync(std::string subject, Json option, int *reqId, Json *outputData);
+		int write(std::string subject, Json inputData);
+		int write(std::string subject, Json inputData, Json *result);
 
 	private:
 		static void __onMethodCalled(GDBusConnection *conn, const gchar *sender,

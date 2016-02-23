@@ -18,14 +18,14 @@
 #define _CONTEXT_I_DBUS_CLIENT_LISTENER_H_
 
 #include <string>
-#include <json.h>
+#include <Json.h>
 
 namespace ctx {
 
 	class IDBusClientListener {
 	public:
 		virtual ~IDBusClientListener() {}
-		virtual void onPublish(std::string subject, int reqId, int error, json event) = 0;
+		virtual void onPublish(std::string subject, int reqId, int error, Json event) = 0;
 	};
 
 }	/* namespace ctx */
