@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <time.h>
 #include <request_handler.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
@@ -45,6 +46,7 @@ int test_trigger_event(int *argc, char ***argv)
 	ctx::request_handler::register_callback(CT_EVENT_USB, __domain_cb);
 	ctx::request_handler::register_callback(CT_EVENT_WIFI, __domain_cb);
 	ctx::request_handler::register_callback(CT_EVENT_CALL, __domain_cb);
+	ctx::request_handler::register_callback(CT_EVENT_TIME, __domain_cb);
 	ctx::request_handler::register_callback(CT_EVENT_EMAIL, __domain_cb);
 	ctx::request_handler::register_callback(CT_EVENT_MESSAGE, __domain_cb);
 	ctx::request_handler::register_callback(CT_EVENT_ACTIVITY_STATIONARY, __domain_cb);
@@ -61,6 +63,7 @@ int test_trigger_event(int *argc, char ***argv)
 	run_testcase("/trigger/event/wifi", _trigger_event_wifi);
 	run_testcase("/trigger/event/psmode", _trigger_event_psmode);
 	run_testcase("/trigger/event/call", _trigger_event_call);
+	run_testcase("/trigger/event/time", _trigger_event_time);
 	run_testcase("/trigger/event/email", _trigger_event_email);
 	run_testcase("/trigger/event/message", _trigger_event_message);
 	run_testcase("/trigger/event/activity", _trigger_event_activity);
@@ -225,6 +228,65 @@ bool _trigger_event_call()
 
 	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_MEDIUM);
 	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_ADDRESS);
+
+	return true;
+}
+
+bool _trigger_event_time()
+{
+	if (!__support(CONTEXT_TRIGGER_EVENT_TIME)) return false;
+
+	time_t rawtime;
+	struct tm timeinfo;
+	time(&rawtime);
+	tzset();
+	localtime_r(&rawtime, &timeinfo);
+	int dow = timeinfo.tm_wday;
+	int tod = timeinfo.tm_hour * 3600 + timeinfo.tm_min * 60 + timeinfo.tm_sec;
+	tod = (tod + 70) / 60;
+
+	std::string dow_str;
+	switch (dow) {
+	case 0:
+		dow_str = CONTEXT_TRIGGER_SUN;
+		break;
+	case 1:
+		dow_str = CONTEXT_TRIGGER_MON;
+		break;
+	case 2:
+		dow_str = CONTEXT_TRIGGER_TUE;
+		break;
+	case 3:
+		dow_str = CONTEXT_TRIGGER_WED;
+		break;
+	case 4:
+		dow_str = CONTEXT_TRIGGER_THU;
+		break;
+	case 5:
+		dow_str = CONTEXT_TRIGGER_FRI;
+		break;
+	case 6:
+		dow_str = CONTEXT_TRIGGER_SAT;
+		break;
+	default:
+		dow_str = CONTEXT_TRIGGER_WEEKDAY;
+		break;
+	}
+	ctx::Json option;
+	option.append(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, dow_str);
+	option.append(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, tod);
+
+	err = ctx::request_handler::subscribe(CT_EVENT_TIME, &option, &req_id, NULL);
+	ASSERT_CMPINT(err, ==, ERR_NONE);
+
+	callback_count = 1;
+	g_print("\n> Wait until %02d:%02d %s.\n", tod / 60, tod % 60, dow_str.c_str());
+	start_mainloop();
+
+	ctx::request_handler::unsubscribe(CT_EVENT_CALL, req_id);
+
+	ASSERT_CONTAIN_INT(json_val, CONTEXT_TRIGGER_TIME_OF_DAY);
+	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_DAY_OF_WEEK);
 
 	return true;
 }

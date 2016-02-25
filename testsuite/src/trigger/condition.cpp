@@ -34,6 +34,7 @@ int test_trigger_condition(int *argc, char ***argv)
 	run_testcase("/trigger/cond/wifi", _trigger_cond_wifi);
 	run_testcase("/trigger/cond/psmode", _trigger_cond_psmode);
 	run_testcase("/trigger/cond/call", _trigger_cond_call);
+	run_testcase("/trigger/cond/time", _trigger_cond_time);
 
 	run_testcase("/trigger/cond/app_freq1", _trigger_cond_app_use_freq1);
 	run_testcase("/trigger/cond/app_freq2", _trigger_cond_app_use_freq2);
@@ -173,6 +174,20 @@ bool _trigger_cond_call()
 
 	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_MEDIUM);
 	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_ADDRESS);
+
+	return true;
+}
+
+bool _trigger_cond_time()
+{
+	if (!__support(CONTEXT_TRIGGER_CONDITION_TIME)) return false;
+
+	err = ctx::request_handler::read_sync(CT_CONDITION_TIME, NULL, &req_id, &json_val);
+	ASSERT_CMPINT(err, ==, ERR_NONE);
+
+	ASSERT_CONTAIN_INT(json_val, CONTEXT_TRIGGER_TIME_OF_DAY);
+	ASSERT_CONTAIN_INT(json_val, CONTEXT_TRIGGER_DAY_OF_MONTH);
+	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_DAY_OF_WEEK);
 
 	return true;
 }

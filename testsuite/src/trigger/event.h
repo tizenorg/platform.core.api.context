@@ -27,6 +27,7 @@ bool _trigger_event_usb();
 bool _trigger_event_wifi();
 bool _trigger_event_psmode();
 bool _trigger_event_call();
+bool _trigger_event_time();
 bool _trigger_event_email();
 bool _trigger_event_message();
 bool _trigger_event_activity();
