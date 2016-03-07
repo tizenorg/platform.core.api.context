@@ -77,13 +77,13 @@ EXTAPI int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id)
 
 	// Err: No event
 	std::string ename;
-	bool ret = (rule->jrule).get(CT_RULE_DETAILS"."CT_RULE_EVENT, CT_RULE_EVENT_ITEM, &ename);
+	bool ret = (rule->jrule).get(CT_RULE_DETAILS "." CT_RULE_EVENT, CT_RULE_EVENT_ITEM, &ename);
 	if (!ret)
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 
 	// Err: No action added
 	std::string type;
-	ret = (rule->jrule).get(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type);
+	ret = (rule->jrule).get(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type);
 	if (!ret)
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 
@@ -364,7 +364,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 
 	// Err: if action arleady exists
 	std::string type;
-	if ((rule->jrule).get(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type)) {
+	if ((rule->jrule).get(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type)) {
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 	}
 
@@ -390,7 +390,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 	pkgmgrinfo_appinfo_destroy_appinfo(app_info);
 
 	// Set action type
-	(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, CT_RULE_ACTION_TYPE_APP_CONTROL);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, CT_RULE_ACTION_TYPE_APP_CONTROL);
 
 	// Set app control
 	bundle* appctl_bundle = NULL;
@@ -403,7 +403,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER, _E, "Bundle encode failed");
 
 	std::string appctl_str = reinterpret_cast<const char*>(appctl_raw);
-	(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_APP_CONTROL, appctl_str);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_APP_CONTROL, appctl_str);
 
 	bundle_free_encoded_rawdata(&appctl_raw);
 
@@ -421,7 +421,7 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 
 	// if action arleady exists
 	std::string type;
-	if ((rule->jrule).get(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type)) {
+	if ((rule->jrule).get(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, &type)) {
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 	}
 
@@ -438,13 +438,13 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 	}
 
 	// Set title, content
-	(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_TYPE, CT_RULE_ACTION_TYPE_NOTIFICATION);
-	(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_NOTI_TITLE, title);
-	(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_NOTI_CONTENT, content);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_TYPE, CT_RULE_ACTION_TYPE_NOTIFICATION);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_NOTI_TITLE, title);
+	(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_NOTI_CONTENT, content);
 
 	// Set icon path
 	if (icon_path) {
-		(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_NOTI_ICON_PATH, icon_path);
+		(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_NOTI_ICON_PATH, icon_path);
 	}
 
 	// Set app control
@@ -459,7 +459,7 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 		IF_FAIL_RETURN_TAG(error == ERR_NONE, CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER, _E, "Bundle encode failed");
 
 		std::string appctl_str = reinterpret_cast<const char*>(appctl_raw);
-		(rule->jrule).set(CT_RULE_DETAILS"."CT_RULE_ACTION, CT_RULE_ACTION_APP_CONTROL, appctl_str);
+		(rule->jrule).set(CT_RULE_DETAILS "." CT_RULE_ACTION, CT_RULE_ACTION_APP_CONTROL, appctl_str);
 
 		bundle_free_encoded_rawdata(&appctl_raw);
 	}
