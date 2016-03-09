@@ -28,7 +28,7 @@ namespace ctx {
 		bool bool_val = false;
 		bool skip_tc = false;
 		bool newline_after_tcname = false;
-		ctx::json json_val = EMPTY_JSON_OBJECT;
+		ctx::Json json_val = EMPTY_JSON_OBJECT;
 		std::string str_val = "";
 	}
 }

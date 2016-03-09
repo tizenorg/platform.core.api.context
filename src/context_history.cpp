@@ -15,10 +15,10 @@
  */
 
 #include <map>
-#include <json.h>
-#include <request_handler.h>
+#include <Json.h>
 #include <context_history.h>
 #include <context_history_types_internal.h>
+#include "request_handler.h"
 
 #define TYPE_INT 0
 #define TYPE_STRING 1
@@ -40,11 +40,11 @@ typedef struct _context_history_handle_s {
 } _cx_history_handle;
 
 typedef struct _context_history_filter_handle_s {
-	ctx::json jfilter;
+	ctx::Json jfilter;
 } _cx_history_filter_handle;
 
 typedef struct _context_history_list_handle_s {
-	ctx::json jlist;
+	ctx::Json jlist;
 	int current;
 	_context_history_list_handle_s()
 	{
@@ -53,7 +53,7 @@ typedef struct _context_history_list_handle_s {
 } _cx_history_list_handle;
 
 typedef struct _context_history_record_handle_s {
-	ctx::json jrecord;
+	ctx::Json jrecord;
 } _cx_history_record_handle;
 
 static std::string convert_filter_to_string(context_history_filter_e filter_type);
@@ -153,13 +153,13 @@ EXTAPI int context_history_get_list(context_history_h handle, context_history_da
 		IF_FAIL_RETURN_TAG(check_invalid_filter(data_type, filter), CONTEXT_HISTORY_ERROR_INVALID_PARAMETER, _E, "Invalid filter key");
 
 	int req_id;
-	ctx::json tmp_list;
+	ctx::Json tmp_list;
 	int err = ctx::request_handler::read_sync(data_type_str.c_str(), (filter)? &filter->jfilter : NULL, &req_id, &tmp_list);
 	IF_FAIL_RETURN_TAG(err==ERR_NONE, err, _E, "Getting list failed");
 
 	_J("Read response", tmp_list);
 
-	IF_FAIL_RETURN_TAG(tmp_list.array_get_size(NULL, CONTEXT_HISTORY_DATA) > 0, CONTEXT_HISTORY_ERROR_NO_DATA, _D, "No data");
+	IF_FAIL_RETURN_TAG(tmp_list.getSize(NULL, CONTEXT_HISTORY_DATA) > 0, CONTEXT_HISTORY_ERROR_NO_DATA, _D, "No data");
 
 	*list = new(std::nothrow) _cx_history_list_handle();
 	ASSERT_ALLOC(*list);
@@ -176,7 +176,7 @@ EXTAPI int context_history_list_get_count(context_history_list_h list, int* coun
 	ASSERT_NOT_NULL(count);
 	*count = 0;
 
-	int result = list->jlist.array_get_size(NULL, CONTEXT_HISTORY_DATA);
+	int result = list->jlist.getSize(NULL, CONTEXT_HISTORY_DATA);
 	IF_FAIL_RETURN(result > 0, CONTEXT_HISTORY_ERROR_OPERATION_FAILED);
 
 	*count = result;
@@ -190,8 +190,8 @@ EXTAPI int context_history_list_get_current(context_history_list_h list, context
 	ASSERT_NOT_NULL(record);
 	*record = NULL;
 
-	ctx::json tmp_record;
-	int error = list->jlist.get_array_elem(NULL, CONTEXT_HISTORY_DATA, list->current, &tmp_record);
+	ctx::Json tmp_record;
+	int error = list->jlist.getAt(NULL, CONTEXT_HISTORY_DATA, list->current, &tmp_record);
 	IF_FAIL_RETURN_TAG(error, CONTEXT_HISTORY_ERROR_OPERATION_FAILED, _E, "Record load failed");
 
 	*record = new(std::nothrow) _cx_history_record_handle();
@@ -215,7 +215,7 @@ EXTAPI int context_history_list_move_next(context_history_list_h list)
 {
 	ASSERT_NOT_NULL(list);
 
-	IF_FAIL_RETURN_TAG(list->current+1 < list->jlist.array_get_size(NULL, CONTEXT_HISTORY_DATA), CONTEXT_HISTORY_ERROR_NO_DATA, _D, "End of list");
+	IF_FAIL_RETURN_TAG(list->current+1 < list->jlist.getSize(NULL, CONTEXT_HISTORY_DATA), CONTEXT_HISTORY_ERROR_NO_DATA, _D, "End of list");
 
 	list->current++;
 
@@ -239,7 +239,7 @@ EXTAPI int context_history_record_get_int(context_history_record_h record, const
 	IF_FAIL_RETURN_TAG(check_record_key_data_type(TYPE_INT, key), CONTEXT_HISTORY_ERROR_INVALID_PARAMETER, _E, "Data type mismatched");
 
 	std::list<std::string> key_list;
-	record->jrecord.get_keys(&key_list);
+	record->jrecord.getKeys(&key_list);
 	IF_FAIL_RETURN_TAG(key_list.size() > 0, CONTEXT_HISTORY_ERROR_NO_DATA, _E, "No data");
 
 	// Check invalid record key
@@ -256,7 +256,7 @@ EXTAPI int context_history_record_get_string(context_history_record_h record, co
 	IF_FAIL_RETURN_TAG(check_record_key_data_type(TYPE_STRING, key), CONTEXT_HISTORY_ERROR_INVALID_PARAMETER, _E, "Data type mismatched");
 
 	std::list<std::string> key_list;
-	record->jrecord.get_keys(&key_list);
+	record->jrecord.getKeys(&key_list);
 	IF_FAIL_RETURN_TAG(key_list.size() > 0, CONTEXT_HISTORY_ERROR_NO_DATA, _E, "No data");
 
 	// Check Invalid record key
@@ -484,7 +484,7 @@ bool check_invalid_filter(context_history_data_e data_type, context_history_filt
 
 	bool found = true;
 	std::list<std::string> keys;
-	filter->jfilter.get_keys(&keys);
+	filter->jfilter.getKeys(&keys);
 
 	for (std::list<std::string>::iterator it = keys.begin(); it != keys.end(); ++it) {
 		std::string key = (*it);

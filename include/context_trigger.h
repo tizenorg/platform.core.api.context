@@ -523,6 +523,8 @@ typedef enum {
 	CONTEXT_TRIGGER_ERROR_RULE_NOT_ENABLED	= (TIZEN_ERROR_CONTEXT | 0X06),			/**< Rule is not enabled */
 	CONTEXT_TRIGGER_ERROR_INVALID_RULE		= (TIZEN_ERROR_CONTEXT | 0X07),			/**< Invalid rule */
 	CONTEXT_TRIGGER_ERROR_RULE_NOT_EXIST	= (TIZEN_ERROR_CONTEXT | 0X08),			/**< Rule does not exist */
+	CONTEXT_TRIGGER_ERROR_INVALID_DATA		= CONTEXT_TRIGGER_ERROR_INVALID_RULE,	/**< Invalid data */
+	CONTEXT_TRIGGER_ERROR_DATA_EXIST		= (TIZEN_ERROR_CONTEXT | 0X09),			/**< Data exist */
 } context_trigger_error_e;
 
 /**
@@ -654,6 +656,7 @@ int context_trigger_remove_rule(int rule_id);
  * @return		0 on success, otherwise a negative error value
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
  * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event/condition contained
  * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
  * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
  * @retval		#CONTEXT_TRIGGER_ERROR_RULE_ENABLED			Rule is enabled already

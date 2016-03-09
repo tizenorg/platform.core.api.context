@@ -27,6 +27,7 @@ bool _trigger_cond_usb();
 bool _trigger_cond_wifi();
 bool _trigger_cond_psmode();
 bool _trigger_cond_call();
+bool _trigger_cond_time();
 
 bool _trigger_cond_app_use_freq1();
 bool _trigger_cond_app_use_freq2();

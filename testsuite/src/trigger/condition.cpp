@@ -34,6 +34,7 @@ int test_trigger_condition(int *argc, char ***argv)
 	run_testcase("/trigger/cond/wifi", _trigger_cond_wifi);
 	run_testcase("/trigger/cond/psmode", _trigger_cond_psmode);
 	run_testcase("/trigger/cond/call", _trigger_cond_call);
+	run_testcase("/trigger/cond/time", _trigger_cond_time);
 
 	run_testcase("/trigger/cond/app_freq1", _trigger_cond_app_use_freq1);
 	run_testcase("/trigger/cond/app_freq2", _trigger_cond_app_use_freq2);
@@ -177,6 +178,20 @@ bool _trigger_cond_call()
 	return true;
 }
 
+bool _trigger_cond_time()
+{
+	if (!__support(CONTEXT_TRIGGER_CONDITION_TIME)) return false;
+
+	err = ctx::request_handler::read_sync(CT_CONDITION_TIME, NULL, &req_id, &json_val);
+	ASSERT_CMPINT(err, ==, ERR_NONE);
+
+	ASSERT_CONTAIN_INT(json_val, CONTEXT_TRIGGER_TIME_OF_DAY);
+	ASSERT_CONTAIN_INT(json_val, CONTEXT_TRIGGER_DAY_OF_MONTH);
+	ASSERT_CONTAIN_STR(json_val, CONTEXT_TRIGGER_DAY_OF_WEEK);
+
+	return true;
+}
+
 static std::string& __get_objective_app_id()
 {
 	static std::string app_id;
@@ -217,7 +232,7 @@ static std::string& __get_objective_app_id()
 	return app_id;
 }
 
-static bool __trigger_cond_app_use_freq_base(ctx::json option)
+static bool __trigger_cond_app_use_freq_base(ctx::Json option)
 {
 	if (!__support(CONTEXT_TRIGGER_CONDITION_APP_USE_FREQUENCY)) return false;
 
@@ -238,7 +253,7 @@ static bool __trigger_cond_app_use_freq_base(ctx::json option)
 bool _trigger_cond_app_use_freq1()
 {
 	/* Case 1: App ID only */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_APP_ID, __get_objective_app_id());
 
 	return __trigger_cond_app_use_freq_base(option);
@@ -247,7 +262,7 @@ bool _trigger_cond_app_use_freq1()
 bool _trigger_cond_app_use_freq2()
 {
 	/* Case 2: App ID, Day of Week */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_APP_ID, __get_objective_app_id());
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 
@@ -257,7 +272,7 @@ bool _trigger_cond_app_use_freq2()
 bool _trigger_cond_app_use_freq3()
 {
 	/* Case 3: App ID, Time of Day */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_APP_ID, __get_objective_app_id());
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
 
@@ -267,7 +282,7 @@ bool _trigger_cond_app_use_freq3()
 bool _trigger_cond_app_use_freq4()
 {
 	/* Case 3: App ID, Time of Day, Day of Week */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_APP_ID, __get_objective_app_id());
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
@@ -315,7 +330,7 @@ static std::string& __get_objective_address()
 	return address;
 }
 
-static bool __trigger_cond_comm_freq_base(ctx::json option)
+static bool __trigger_cond_comm_freq_base(ctx::Json option)
 {
 	if (!__support(CONTEXT_TRIGGER_CONDITION_COMMUNICATION_FREQUENCY)) return false;
 
@@ -336,7 +351,7 @@ static bool __trigger_cond_comm_freq_base(ctx::json option)
 bool _trigger_cond_comm_freq1()
 {
 	/* Case 1: Address only */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_ADDRESS, __get_objective_address());
 
 	return __trigger_cond_comm_freq_base(option);
@@ -345,7 +360,7 @@ bool _trigger_cond_comm_freq1()
 bool _trigger_cond_comm_freq2()
 {
 	/* Case 2: Address, Day of Week */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_ADDRESS, __get_objective_address());
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 
@@ -355,7 +370,7 @@ bool _trigger_cond_comm_freq2()
 bool _trigger_cond_comm_freq3()
 {
 	/* Case 3: Address, Time of Day */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_ADDRESS, __get_objective_address());
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
 
@@ -365,7 +380,7 @@ bool _trigger_cond_comm_freq3()
 bool _trigger_cond_comm_freq4()
 {
 	/* Case 4: Address, Day of Week, Time of Day */
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_ADDRESS, __get_objective_address());
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
@@ -373,7 +388,7 @@ bool _trigger_cond_comm_freq4()
 	return __trigger_cond_comm_freq_base(option);
 }
 
-static bool __trigger_cond_media_freq_base(context_trigger_condition_e item, const char *item_str, ctx::json option)
+static bool __trigger_cond_media_freq_base(context_trigger_condition_e item, const char *item_str, ctx::Json option)
 {
 	if (!__support(item)) return false;
 
@@ -390,7 +405,7 @@ static bool __trigger_cond_media_freq_base(context_trigger_condition_e item, con
 
 bool _trigger_cond_music_freq1()
 {
-	ctx::json option;
+	ctx::Json option;
 
 	return __trigger_cond_media_freq_base(
 			CONTEXT_TRIGGER_CONDITION_MUSIC_PLAYBACK_FREQUENCY,
@@ -399,7 +414,7 @@ bool _trigger_cond_music_freq1()
 
 bool _trigger_cond_music_freq2()
 {
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 
 	return __trigger_cond_media_freq_base(
@@ -409,7 +424,7 @@ bool _trigger_cond_music_freq2()
 
 bool _trigger_cond_music_freq3()
 {
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
 
 	return __trigger_cond_media_freq_base(
@@ -419,7 +434,7 @@ bool _trigger_cond_music_freq3()
 
 bool _trigger_cond_music_freq4()
 {
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
 
@@ -430,7 +445,7 @@ bool _trigger_cond_music_freq4()
 
 bool _trigger_cond_video_freq1()
 {
-	ctx::json option;
+	ctx::Json option;
 
 	return __trigger_cond_media_freq_base(
 			CONTEXT_TRIGGER_CONDITION_VIDEO_PLAYBACK_FREQUENCY,
@@ -439,7 +454,7 @@ bool _trigger_cond_video_freq1()
 
 bool _trigger_cond_video_freq2()
 {
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 
 	return __trigger_cond_media_freq_base(
@@ -449,7 +464,7 @@ bool _trigger_cond_video_freq2()
 
 bool _trigger_cond_video_freq3()
 {
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
 
 	return __trigger_cond_media_freq_base(
@@ -459,7 +474,7 @@ bool _trigger_cond_video_freq3()
 
 bool _trigger_cond_video_freq4()
 {
-	ctx::json option;
+	ctx::Json option;
 	option.set(NULL, CONTEXT_TRIGGER_DAY_OF_WEEK, CONTEXT_TRIGGER_WEEKDAY);
 	option.set(NULL, CONTEXT_TRIGGER_TIME_OF_DAY, "10-16");
 

@@ -17,8 +17,6 @@
 #ifndef __TIZEN_CONTEXT_HISTORY_TYPES_INTERNAL_H__
 #define __TIZEN_CONTEXT_HISTORY_TYPES_INTERNAL_H__
 
-#include <json.h>
-
 #define CONTEXT_HISTORY_DATA		"QueryResult"
 
 #define SUBJ_RECENTLY_USED_APP		"stats/app/recently"
