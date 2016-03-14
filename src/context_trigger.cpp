@@ -1012,6 +1012,9 @@ std::string convert_event_to_string(context_trigger_event_e item)
 	case CONTEXT_TRIGGER_EVENT_MESSAGE:
 		str = CT_EVENT_MESSAGE;
 		break;
+	case CONTEXT_TRIGGER_EVENT_CONTACTS_DB_CHANGED:
+		str = CT_EVENT_CONTACTS_DB_CHANGED;
+		break;
 	case CONTEXT_TRIGGER_EVENT_ACTIVITY_STATIONARY:
 		str = CT_EVENT_ACTIVITY_STATIONARY;
 		break;
