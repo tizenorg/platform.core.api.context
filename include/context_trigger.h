@@ -785,8 +785,7 @@ int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_trigger_
  * @since_tizen 2.4
  *
  * @privlevel	public
- * @privilege	http://tizen.org/privilege/appmanager.launch @n
- *				http://tizen.org/privilege/call
+ * @privilege	http://tizen.org/privilege/appmanager.launch
  *
  * @remarks		In addition to the privilege http://tizen.org/privilege/appmanager.launch,
  *				if it is an App Control that makes a call to someone,
