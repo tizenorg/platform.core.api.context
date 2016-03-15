@@ -178,14 +178,6 @@ extern "C" {
 #define CONTEXT_TRIGGER_TYPE "Type"
 
 /**
- * @brief	The attribute key denoting "view".
- * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
- *			See the programming guide to find available right operands.
- * @since_tizen 3.0
- */
-#define CONTEXT_TRIGGER_VIEW "View"
-
-/**
  * @brief	The attribute key denoting "event".
  * @details	This can be used as left operands of context_trigger_rule_entry_add_comparison_string().@n
  *			See the programming guide to find available right operands.
@@ -508,6 +500,14 @@ extern "C" {
 #define CONTEXT_TRIGGER_PERSON "Person"
 
 /**
+ * @brief	The attribute value denoting the "Changed" event.
+ * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
+ *			See the programming guide to find the corresponding left operand attribute keys.
+ * @since_tizen 3.0
+ */
+#define CONTEXT_TRIGGER_CHANGED "Changed"
+
+/**
  * @brief	The attribute value denoting the "detected" event.
  * @details	This can be used as right operands of context_trigger_rule_entry_add_comparison_string().@n
  *			See the programming guide to find the corresponding left operand attribute keys.
@@ -567,7 +567,7 @@ typedef enum {
 	CONTEXT_TRIGGER_EVENT_CALL		= 0x10300,	/**< Call state changed @n Privilege: http://tizen.org/privilege/telephony */
 	CONTEXT_TRIGGER_EVENT_EMAIL,				/**< Email sent/received */
 	CONTEXT_TRIGGER_EVENT_MESSAGE,				/**< Message sent/received @n Privilege: http://tizen.org/privilege/message.read */
-	CONTEXT_TRIGGER_EVENT_CONTACTS_DB_CHANGED,	/**< Contacts db changed (Since Tizen 3.0) @n Privilege: http://tizen.org/privilege/contact.read */
+	CONTEXT_TRIGGER_EVENT_CONTACTS,				/**< Contacts changed (Since Tizen 3.0) @n Privilege: http://tizen.org/privilege/contact.read */
 	CONTEXT_TRIGGER_EVENT_ACTIVITY_STATIONARY	= 0x10400,	/**< 'Stationary' activity detected */
 	CONTEXT_TRIGGER_EVENT_ACTIVITY_WALKING,		/**< 'Walking' activity detected */
 	CONTEXT_TRIGGER_EVENT_ACTIVITY_RUNNING,		/**< 'Running' activity detected */
