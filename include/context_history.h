@@ -288,12 +288,9 @@ int context_history_filter_set_string(context_history_filter_h filter, context_h
  * @details		Retrieves a given type of context statistics or patterns list.
  * @since_tizen 2.4
  *
- * @privlevel public
- * @privilege	%http://tizen.org/privilege/apphistory.read
- * @privilege   %http://tizen.org/privilege/mediahistory.read
- *
  * @remarks		The @c list must be released using context_history_list_destroy(). \n
- *              %http://tizen.org/privilege/apphistory.read or %http://tizen.org/privilege/mediahistory.read is needed to retrieve data. It depends on context data type #context_history_data_e.
+ *              %http://tizen.org/privilege/apphistory.read or %http://tizen.org/privilege/mediahistory.read
+ *				is needed to retrieve data. It depends on context data type #context_history_data_e.
  *
  * @param[in]	handle      Handle for controlling the context history data requests
  * @param[in]	data_type	Type of the history data

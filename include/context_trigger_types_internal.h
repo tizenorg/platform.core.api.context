@@ -78,6 +78,7 @@
 #define CT_EVENT_CALL "social/call"
 #define CT_EVENT_EMAIL "social/email"
 #define CT_EVENT_MESSAGE "social/message"
+#define CT_EVENT_CONTACTS_DB_CHANGED "social/contacts"
 #define CT_EVENT_ACTIVITY_STATIONARY "activity/stationary"
 #define CT_EVENT_ACTIVITY_WALKING "activity/walking"
 #define CT_EVENT_ACTIVITY_RUNNING "activity/running"
