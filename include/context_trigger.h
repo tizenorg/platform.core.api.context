@@ -567,7 +567,7 @@ typedef enum {
 	CONTEXT_TRIGGER_EVENT_CALL		= 0x10300,	/**< Call state changed @n Privilege: http://tizen.org/privilege/telephony */
 	CONTEXT_TRIGGER_EVENT_EMAIL,				/**< Email sent/received */
 	CONTEXT_TRIGGER_EVENT_MESSAGE,				/**< Message sent/received @n Privilege: http://tizen.org/privilege/message.read */
-	CONTEXT_TRIGGER_EVENT_CONTACTS,				/**< Contacts changed (Since Tizen 3.0) @n Privilege: http://tizen.org/privilege/contact.read */
+	CONTEXT_TRIGGER_EVENT_CONTACTS,				/**< Contacts changed (Since 3.0) @n Privilege: http://tizen.org/privilege/contact.read */
 	CONTEXT_TRIGGER_EVENT_ACTIVITY_STATIONARY	= 0x10400,	/**< 'Stationary' activity detected */
 	CONTEXT_TRIGGER_EVENT_ACTIVITY_WALKING,		/**< 'Walking' activity detected */
 	CONTEXT_TRIGGER_EVENT_ACTIVITY_RUNNING,		/**< 'Running' activity detected */
