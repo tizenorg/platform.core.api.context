@@ -622,12 +622,9 @@ typedef struct _context_trigger_rule_entry_s* context_trigger_rule_entry_h;
  *				A rule only can be enabled, disabled, or removed by the application that has registered the rule.
  * @since_tizen 2.4
  *
- * @remarks		When registering a new rule,
- *				regarding the event and condition items used to compose the rule,
+ * @remarks		When registering a new rule, regarding the event and condition items used to compose the rule,
  *				the application may require one or more privileges.
- *				If the application does not have a necessary privilege,
- *				#CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED is returned.
- *				See #context_trigger_event_e and #context_trigger_condition_e for the necessary privileges.
+ *				For details, see context_trigger_rule_event_create() and context_trigger_rule_condition_create().
  *
  * @param[in]	rule		The rule to register
  * @param[out]	rule_id		The ID assigned to the @c rule
@@ -895,7 +892,17 @@ int context_trigger_rule_get_description(context_trigger_rule_h rule, char** des
  * @details		An event of a contextual event item, which will be monitored by the system, is created.
  * @since_tizen 2.4
  *
- * @remarks		The @c entry must be released using context_trigger_rule_entry_destroy().
+ * @remarks		Regarding the @c event_item, the application may require one of the following privileges:@n
+ *				http://tizen.org/privilege/alarm.set @n
+ *				http://tizen.org/privilege/network.get @n
+ *				http://tizen.org/privilege/telephony @n
+ *				http://tizen.org/privilege/message.read @n
+ *				http://tizen.org/privilege/contact.read @n
+ *				http://tizen.org/privilege/location @n
+ *				If the application does not have necessary privilege, when registering the corresponding rule,
+ *				context_trigger_add_rule() will return #CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED.
+ *				See #context_trigger_event_e to find the corresponding privilege of each event item.@n
+ *				The @c entry must be released using context_trigger_rule_entry_destroy().
  *
  * @param[in]	event_item		The contextual event item
  * @param[in]	logical_type	The logical operator
@@ -930,7 +937,16 @@ int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, 
  * @details		A condition of a contextual condition item is created.
  * @since_tizen 2.4
  *
- * @remarks		The @c entry must be released using context_trigger_rule_entry_destroy().
+ * @remarks		Regarding the @c condition_item, the application may require one of the following privileges:@n
+ *				http://tizen.org/privilege/network.get @n
+ *				http://tizen.org/privilege/telephony @n
+ *				http://tizen.org/privilege/apphistory.read @n
+ *				http://tizen.org/privilege/callhistory.read @n
+ *				http://tizen.org/privilege/mediahistory.read @n
+ *				If the application does not have necessary privilege, when registering the corresponding rule,
+ *				context_trigger_add_rule() will return #CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED.
+ *				See #context_trigger_condition_e to find the corresponding privilege of each condition item.@n
+ *				The @c entry must be released using context_trigger_rule_entry_destroy().
  *
  * @param[in]	condition_item	The contextual condition item
  * @param[in]	logical_type	The logical operator
