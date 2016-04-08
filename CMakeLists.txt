@@ -17,7 +17,8 @@ INCLUDE(FindPkgConfig)
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/include
 )
-ADD_DEFINITIONS(-g -O2 -Wall -fPIC -fvisibility=hidden -Wl,--as-needed)
+ADD_DEFINITIONS(-O2 -Wall -fPIC -fdata-sections -ffunction-sections -fvisibility=hidden)
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fPIC -Wl,--as-needed -Wl,--gc-section -Wl,--print-gc-section")
 
 # Building Library
 pkg_check_modules(api_pkg REQUIRED ${DEPS})
@@ -34,7 +35,7 @@ SET_TARGET_PROPERTIES(${target} PROPERTIES SOVERSION ${MAJORVER})
 SET_TARGET_PROPERTIES(${target} PROPERTIES VERSION ${FULLVER})
 
 # Installing
-INSTALL(TARGETS ${target} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries)
+INSTALL(TARGETS ${target} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 INSTALL(
 	DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/context-service
 	FILES_MATCHING
