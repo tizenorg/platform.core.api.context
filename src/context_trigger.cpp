@@ -47,8 +47,7 @@ typedef struct _context_trigger_rule_s {
 	ctx::Json jrule;	// rule_id, description, details(event, condition[])
 	ctx::Json jref;
 
-	_context_trigger_rule_s()
-	{
+	_context_trigger_rule_s() {
 		jrule = INITIAL_RULE;
 		jref = INITIAL_REF;
 	}
@@ -59,8 +58,7 @@ typedef struct _context_trigger_rule_entry_s {
 	int type;
 	ctx::Json jref;
 
-	_context_trigger_rule_entry_s(int t): type(t)
-	{
+	_context_trigger_rule_entry_s(int t): type(t) {
 		jentry = INITIAL_ENTRY;
 
 		if (t == TYPE_CONDITION) {
@@ -963,7 +961,7 @@ EXTAPI int context_trigger_publish_custom_item(const char* name, const char* fac
 
 	// Err: Invalid Json
 	ctx::Json jfact = fact;
-	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact Json" );
+	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact Json");
 
 	ctx::Json data;
 	data.set(NULL, CT_CUSTOM_NAME, name);

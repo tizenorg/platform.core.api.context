@@ -46,8 +46,7 @@ typedef struct _context_history_filter_handle_s {
 typedef struct _context_history_list_handle_s {
 	ctx::Json jlist;
 	int current;
-	_context_history_list_handle_s()
-	{
+	_context_history_list_handle_s() {
 		current = 0;
 	}
 } _cx_history_list_handle;
@@ -155,7 +154,7 @@ EXTAPI int context_history_get_list(context_history_h handle, context_history_da
 	int req_id;
 	ctx::Json tmp_list;
 	int err = ctx::request_handler::read_sync(data_type_str.c_str(), (filter)? &filter->jfilter : NULL, &req_id, &tmp_list);
-	IF_FAIL_RETURN_TAG(err==ERR_NONE, err, _E, "Getting list failed");
+	IF_FAIL_RETURN_TAG(err == ERR_NONE, err, _E, "Getting list failed");
 
 	_J("Read response", tmp_list);
 
