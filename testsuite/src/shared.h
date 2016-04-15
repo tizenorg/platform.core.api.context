@@ -21,7 +21,7 @@
 #include <iostream>
 #include <string>
 #include <glib.h>
-#include <types_internal.h>
+#include <Types.h>
 #include <Json.h>
 
 #define CALLBACK_COUNT 5

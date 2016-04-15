@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 
-#include <types_internal.h>
+#include <Types.h>
 #include <ScopeMutex.h>
 #include "DBusClient.h"
 #include "request_handler.h"

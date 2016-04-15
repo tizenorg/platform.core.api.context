@@ -17,7 +17,7 @@
 #include <sstream>
 #include <string>
 #include <map>
-#include <types_internal.h>
+#include <Types.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
 #include "request_handler.h"
