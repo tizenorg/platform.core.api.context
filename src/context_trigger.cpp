@@ -68,7 +68,7 @@ typedef struct _context_trigger_rule_entry_s {
 } _context_trigger_rule_entry_h;
 
 // Add a rule
-EXTAPI int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id)
+SO_EXPORT int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule && rule_id);
@@ -97,7 +97,7 @@ EXTAPI int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id)
 }
 
 // Remove a rule
-EXTAPI int context_trigger_remove_rule(int rule_id)
+SO_EXPORT int context_trigger_remove_rule(int rule_id)
 {
 	_D("BEGIN");
 	if (rule_id <= 0)
@@ -117,7 +117,7 @@ EXTAPI int context_trigger_remove_rule(int rule_id)
 }
 
 // Enable a rule
-EXTAPI int context_trigger_enable_rule(int rule_id)
+SO_EXPORT int context_trigger_enable_rule(int rule_id)
 {
 	_D("BEGIN");
 	if (rule_id <= 0)
@@ -137,7 +137,7 @@ EXTAPI int context_trigger_enable_rule(int rule_id)
 }
 
 // Disable a rule
-EXTAPI int context_trigger_disable_rule(int rule_id)
+SO_EXPORT int context_trigger_disable_rule(int rule_id)
 {
 	_D("BEGIN");
 	if (rule_id <= 0)
@@ -154,7 +154,7 @@ EXTAPI int context_trigger_disable_rule(int rule_id)
 	return error;
 }
 
-EXTAPI int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled_rule_count, int** disabled_rule_ids, int* disabled_rule_count)
+SO_EXPORT int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled_rule_count, int** disabled_rule_ids, int* disabled_rule_count)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(enabled_rule_ids && enabled_rule_count && disabled_rule_ids && disabled_rule_count);
@@ -200,7 +200,7 @@ EXTAPI int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled
 	return error;
 }
 
-EXTAPI int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h* rule)
+SO_EXPORT int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h* rule)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule);
@@ -227,7 +227,7 @@ EXTAPI int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h* r
 }
 
 // Rule creation
-EXTAPI int context_trigger_rule_create(context_trigger_logical_type_e logical_type, context_trigger_rule_h* rule)
+SO_EXPORT int context_trigger_rule_create(context_trigger_logical_type_e logical_type, context_trigger_rule_h* rule)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule);
@@ -244,7 +244,7 @@ EXTAPI int context_trigger_rule_create(context_trigger_logical_type_e logical_ty
 }
 
 // Rule deletion
-EXTAPI int context_trigger_rule_destroy(context_trigger_rule_h rule)
+SO_EXPORT int context_trigger_rule_destroy(context_trigger_rule_h rule)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule);
@@ -254,7 +254,7 @@ EXTAPI int context_trigger_rule_destroy(context_trigger_rule_h rule)
 }
 
 
-EXTAPI int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_trigger_rule_entry_h entry)
+SO_EXPORT int context_trigger_rule_add_entry(context_trigger_rule_h rule, context_trigger_rule_entry_h entry)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule && entry);
@@ -345,7 +345,7 @@ static bool is_call_operation(app_control_h app_control)
 	return ret;
 }
 
-EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h rule, app_control_h app_control)
+SO_EXPORT int context_trigger_rule_set_action_app_control(context_trigger_rule_h rule, app_control_h app_control)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule && app_control);
@@ -408,7 +408,7 @@ EXTAPI int context_trigger_rule_set_action_app_control(context_trigger_rule_h ru
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h rule, const char* title, const char* content, const char* icon_path, app_control_h app_control)
+SO_EXPORT int context_trigger_rule_set_action_notification(context_trigger_rule_h rule, const char* title, const char* content, const char* icon_path, app_control_h app_control)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule && title && content);
@@ -465,7 +465,7 @@ EXTAPI int context_trigger_rule_set_action_notification(context_trigger_rule_h r
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h rule,
+SO_EXPORT int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h rule,
 		const char *bus_name, const char *object_path, const char *interface_name, const char *method_name, GVariant *param)
 {
 	ASSERT_NOT_NULL(rule && bus_name && object_path && interface_name && method_name);
@@ -492,7 +492,7 @@ EXTAPI int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h rule
 }
 
 // Set description
-EXTAPI int context_trigger_rule_set_description(context_trigger_rule_h rule, const char* description)
+SO_EXPORT int context_trigger_rule_set_description(context_trigger_rule_h rule, const char* description)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule);
@@ -503,7 +503,7 @@ EXTAPI int context_trigger_rule_set_description(context_trigger_rule_h rule, con
 }
 
 // Get rule description
-EXTAPI int context_trigger_rule_get_description(context_trigger_rule_h rule, char** description)
+SO_EXPORT int context_trigger_rule_get_description(context_trigger_rule_h rule, char** description)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(rule && description);
@@ -517,7 +517,7 @@ EXTAPI int context_trigger_rule_get_description(context_trigger_rule_h rule, cha
 }
 
 // Event creation
-EXTAPI int context_trigger_rule_event_create(context_trigger_event_e event_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
+SO_EXPORT int context_trigger_rule_event_create(context_trigger_event_e event_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry);
@@ -531,7 +531,7 @@ EXTAPI int context_trigger_rule_event_create(context_trigger_event_e event_item,
 	return error;
 }
 
-EXTAPI int context_trigger_rule_custom_event_create(const char* event_item, const char* provider, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
+SO_EXPORT int context_trigger_rule_custom_event_create(const char* event_item, const char* provider, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(event_item && provider && entry);
@@ -570,7 +570,7 @@ int context_trigger_rule_event_create_internal(const char* event_item, context_t
 }
 
 // Event availability check
-EXTAPI int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, bool* supported)
+SO_EXPORT int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, bool* supported)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(supported);
@@ -594,7 +594,7 @@ EXTAPI int context_trigger_rule_event_is_supported(context_trigger_event_e event
 }
 
 // Condition creation
-EXTAPI int context_trigger_rule_condition_create(context_trigger_condition_e condition_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
+SO_EXPORT int context_trigger_rule_condition_create(context_trigger_condition_e condition_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry);
@@ -608,7 +608,7 @@ EXTAPI int context_trigger_rule_condition_create(context_trigger_condition_e con
 	return error;
 }
 
-EXTAPI int context_trigger_rule_custom_condition_create(const char* condition_item, const char* provider, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
+SO_EXPORT int context_trigger_rule_custom_condition_create(const char* condition_item, const char* provider, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(condition_item && provider && entry);
@@ -645,7 +645,7 @@ int context_trigger_rule_condition_create_internal(const char* condition_item, c
 }
 
 // Condition availability check
-EXTAPI int context_trigger_rule_condition_is_supported(context_trigger_condition_e condition_item, bool* supported)
+SO_EXPORT int context_trigger_rule_condition_is_supported(context_trigger_condition_e condition_item, bool* supported)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(supported);
@@ -669,7 +669,7 @@ EXTAPI int context_trigger_rule_condition_is_supported(context_trigger_condition
 }
 
 // Rule data deletion
-EXTAPI int context_trigger_rule_entry_destroy(context_trigger_rule_entry_h entry)
+SO_EXPORT int context_trigger_rule_entry_destroy(context_trigger_rule_entry_h entry)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry);
@@ -678,7 +678,7 @@ EXTAPI int context_trigger_rule_entry_destroy(context_trigger_rule_entry_h entry
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_entry_add_option_int(context_trigger_rule_entry_h entry, const char* option_key, int value)
+SO_EXPORT int context_trigger_rule_entry_add_option_int(context_trigger_rule_entry_h entry, const char* option_key, int value)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && option_key);
@@ -696,7 +696,7 @@ EXTAPI int context_trigger_rule_entry_add_option_int(context_trigger_rule_entry_
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_entry_add_option_string(context_trigger_rule_entry_h entry, const char* option_key, const char* value)
+SO_EXPORT int context_trigger_rule_entry_add_option_string(context_trigger_rule_entry_h entry, const char* option_key, const char* value)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && option_key && value);
@@ -714,7 +714,7 @@ EXTAPI int context_trigger_rule_entry_add_option_string(context_trigger_rule_ent
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h entry, const char* option_key, const char* event_data_key)
+SO_EXPORT int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h entry, const char* option_key, const char* event_data_key)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && option_key && event_data_key);
@@ -740,7 +740,7 @@ EXTAPI int context_trigger_rule_entry_add_option(context_trigger_rule_entry_h en
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry, context_trigger_logical_type_e logical_type, const char* key)
+SO_EXPORT int context_trigger_rule_entry_add_key(context_trigger_rule_entry_h entry, context_trigger_logical_type_e logical_type, const char* key)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key);
@@ -834,7 +834,7 @@ static int context_trigger_rule_entry_add_comparison_int_internal(context_trigge
 	return CONTEXT_TRIGGER_ERROR_NO_DATA;
 }
 
-EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry, const char* key, const char* op, const char* event_data_key)
+SO_EXPORT int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry, const char* key, const char* op, const char* event_data_key)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op && event_data_key);
@@ -866,7 +866,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
 
-EXTAPI int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_entry_h entry, const char* key, const char* op, int value)
+SO_EXPORT int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_entry_h entry, const char* key, const char* op, int value)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op);
@@ -881,7 +881,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_int(context_trigger_rule_en
 	return error;
 }
 /*
-EXTAPI int context_trigger_rule_entry_add_comparison_double(context_trigger_rule_entry_h entry, const char* key, const char* op, double value)
+SO_EXPORT int context_trigger_rule_entry_add_comparison_double(context_trigger_rule_entry_h entry, const char* key, const char* op, double value)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op);
@@ -897,7 +897,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_double(context_trigger_rule
 	return error;
 }
 */
-EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule_entry_h entry, const char* key, const char* op, const char* value)
+SO_EXPORT int context_trigger_rule_entry_add_comparison_string(context_trigger_rule_entry_h entry, const char* key, const char* op, const char* value)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(entry && key && op && value);
@@ -912,7 +912,7 @@ EXTAPI int context_trigger_rule_entry_add_comparison_string(context_trigger_rule
 	return error;
 }
 
-EXTAPI int context_trigger_add_custom_item(const char* name, const char* attr_template)
+SO_EXPORT int context_trigger_add_custom_item(const char* name, const char* attr_template)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(name && attr_template);
@@ -935,7 +935,7 @@ EXTAPI int context_trigger_add_custom_item(const char* name, const char* attr_te
 	return error;
 }
 
-EXTAPI int context_trigger_remove_custom_item(const char* name)
+SO_EXPORT int context_trigger_remove_custom_item(const char* name)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(name);
@@ -954,7 +954,7 @@ EXTAPI int context_trigger_remove_custom_item(const char* name)
 	return error;
 }
 
-EXTAPI int context_trigger_publish_custom_item(const char* name, const char* fact)
+SO_EXPORT int context_trigger_publish_custom_item(const char* name, const char* fact)
 {
 	_D("BEGIN");
 	ASSERT_NOT_NULL(name && fact);
