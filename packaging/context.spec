@@ -8,6 +8,10 @@ Source0:    %{name}-%{version}.tar.gz
 
 %define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
 
+%if "%{?BUILD_PROFILE}" == "tv"
+ExcludeArch: %{arm} aarch64 %ix86 x86_64
+%endif
+
 BuildRequires: cmake
 BuildRequires: pkgconfig(libcontext-shared)
 BuildRequires: pkgconfig(aul)
