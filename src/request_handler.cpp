@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2015 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 
-#include <types_internal.h>
+#include <Types.h>
 #include <ScopeMutex.h>
 #include "DBusClient.h"
 #include "request_handler.h"
@@ -51,42 +51,42 @@ void DBusClientListenerImpl::onPublish(std::string subject, int reqId, int error
 static DBusClientListenerImpl __dbusListener;
 static DBusClient __dbusClient;
 
-EXTAPI int ctx::request_handler::subscribe(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result)
+SO_EXPORT int ctx::request_handler::subscribe(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result)
 {
 	return __dbusClient.subscribe(subject, option ? *option : NULL, req_id, request_result);
 }
 
-EXTAPI int ctx::request_handler::unsubscribe(const char* subject, int req_id)
+SO_EXPORT int ctx::request_handler::unsubscribe(const char* subject, int req_id)
 {
 	return __dbusClient.unsubscribe(subject, req_id);
 }
 
-EXTAPI int ctx::request_handler::read(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result)
+SO_EXPORT int ctx::request_handler::read(const char* subject, ctx::Json* option, int* req_id, ctx::Json* request_result)
 {
 	return __dbusClient.read(subject, option ? *option : NULL, req_id, request_result);
 }
 
-EXTAPI int ctx::request_handler::read_sync(const char* subject, ctx::Json* option, int* req_id, ctx::Json* data_read)
+SO_EXPORT int ctx::request_handler::read_sync(const char* subject, ctx::Json* option, int* req_id, ctx::Json* data_read)
 {
 	return __dbusClient.readSync(subject, option ? *option : NULL, req_id, data_read);
 }
 
-EXTAPI int ctx::request_handler::write(const char* subject, ctx::Json* data)
+SO_EXPORT int ctx::request_handler::write(const char* subject, ctx::Json* data)
 {
 	return __dbusClient.write(subject, *data);
 }
 
-EXTAPI int ctx::request_handler::write_with_reply(const char* subject, ctx::Json* data, ctx::Json* request_result)
+SO_EXPORT int ctx::request_handler::write_with_reply(const char* subject, ctx::Json* data, ctx::Json* request_result)
 {
 	return __dbusClient.write(subject, *data, request_result);
 }
 
-EXTAPI int ctx::request_handler::is_supported(const char* subject)
+SO_EXPORT int ctx::request_handler::is_supported(const char* subject)
 {
 	return __dbusClient.isSupported(subject);
 }
 
-EXTAPI bool ctx::request_handler::register_callback(const char* subject, subject_response_cb callback)
+SO_EXPORT bool ctx::request_handler::register_callback(const char* subject, subject_response_cb callback)
 {
 	__dbusListener.setCb(subject, callback);
 	__dbusClient.addListener(subject, &__dbusListener);

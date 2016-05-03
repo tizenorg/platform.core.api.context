@@ -16,7 +16,7 @@
 
 #include <glib.h>
 #include <string>
-#include <types_internal.h>
+#include <Types.h>
 #include "priv_util.h"
 
 int ctx::privilege_util::is_allowed(const char* priv)

@@ -46,8 +46,7 @@ typedef struct _context_history_filter_handle_s {
 typedef struct _context_history_list_handle_s {
 	ctx::Json jlist;
 	int current;
-	_context_history_list_handle_s()
-	{
+	_context_history_list_handle_s() {
 		current = 0;
 	}
 } _cx_history_list_handle;
@@ -64,7 +63,7 @@ static bool check_filter_data_string(context_history_filter_e filter_type, const
 static bool check_invalid_filter(context_history_data_e data_type, context_history_filter_h filter);
 
 // life-cycle
-EXTAPI int context_history_create(context_history_h* handle)
+SO_EXPORT int context_history_create(context_history_h* handle)
 {
 	ASSERT_NOT_NULL(handle);
 
@@ -74,7 +73,7 @@ EXTAPI int context_history_create(context_history_h* handle)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_destroy(context_history_h handle)
+SO_EXPORT int context_history_destroy(context_history_h handle)
 {
 	ASSERT_NOT_NULL(handle);
 	delete handle;
@@ -82,7 +81,7 @@ EXTAPI int context_history_destroy(context_history_h handle)
 }
 
 // Read filter manipulation
-EXTAPI int context_history_filter_create(context_history_filter_h* filter)
+SO_EXPORT int context_history_filter_create(context_history_filter_h* filter)
 {
 	ASSERT_NOT_NULL(filter);
 
@@ -92,7 +91,7 @@ EXTAPI int context_history_filter_create(context_history_filter_h* filter)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_filter_destroy(context_history_filter_h filter)
+SO_EXPORT int context_history_filter_destroy(context_history_filter_h filter)
 {
 	ASSERT_NOT_NULL(filter);
 	delete filter;
@@ -100,7 +99,7 @@ EXTAPI int context_history_filter_destroy(context_history_filter_h filter)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_filter_set_int(context_history_filter_h filter, context_history_filter_e filter_type, int val)
+SO_EXPORT int context_history_filter_set_int(context_history_filter_h filter, context_history_filter_e filter_type, int val)
 {
 	ASSERT_NOT_NULL(filter);
 
@@ -117,7 +116,7 @@ EXTAPI int context_history_filter_set_int(context_history_filter_h filter, conte
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_filter_set_string(context_history_filter_h filter, context_history_filter_e filter_type, const char* val)
+SO_EXPORT int context_history_filter_set_string(context_history_filter_h filter, context_history_filter_e filter_type, const char* val)
 {
 	ASSERT_NOT_NULL(filter);
 	ASSERT_NOT_NULL(val);
@@ -135,7 +134,7 @@ EXTAPI int context_history_filter_set_string(context_history_filter_h filter, co
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_get_list(context_history_h handle, context_history_data_e data_type, context_history_filter_h filter, context_history_list_h* list)
+SO_EXPORT int context_history_get_list(context_history_h handle, context_history_data_e data_type, context_history_filter_h filter, context_history_list_h* list)
 {
 	ASSERT_NOT_NULL(handle);
 	ASSERT_NOT_NULL(list);
@@ -155,7 +154,7 @@ EXTAPI int context_history_get_list(context_history_h handle, context_history_da
 	int req_id;
 	ctx::Json tmp_list;
 	int err = ctx::request_handler::read_sync(data_type_str.c_str(), (filter)? &filter->jfilter : NULL, &req_id, &tmp_list);
-	IF_FAIL_RETURN_TAG(err==ERR_NONE, err, _E, "Getting list failed");
+	IF_FAIL_RETURN_TAG(err == ERR_NONE, err, _E, "Getting list failed");
 
 	_J("Read response", tmp_list);
 
@@ -170,7 +169,7 @@ EXTAPI int context_history_get_list(context_history_h handle, context_history_da
 }
 
 // Data object manipulation
-EXTAPI int context_history_list_get_count(context_history_list_h list, int* count)
+SO_EXPORT int context_history_list_get_count(context_history_list_h list, int* count)
 {
 	ASSERT_NOT_NULL(list);
 	ASSERT_NOT_NULL(count);
@@ -184,7 +183,7 @@ EXTAPI int context_history_list_get_count(context_history_list_h list, int* coun
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_list_get_current(context_history_list_h list, context_history_record_h* record)
+SO_EXPORT int context_history_list_get_current(context_history_list_h list, context_history_record_h* record)
 {
 	ASSERT_NOT_NULL(list);
 	ASSERT_NOT_NULL(record);
@@ -202,7 +201,7 @@ EXTAPI int context_history_list_get_current(context_history_list_h list, context
 }
 
 
-EXTAPI int context_history_list_move_first(context_history_list_h list)
+SO_EXPORT int context_history_list_move_first(context_history_list_h list)
 {
 	ASSERT_NOT_NULL(list);
 
@@ -211,7 +210,7 @@ EXTAPI int context_history_list_move_first(context_history_list_h list)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_list_move_next(context_history_list_h list)
+SO_EXPORT int context_history_list_move_next(context_history_list_h list)
 {
 	ASSERT_NOT_NULL(list);
 
@@ -222,7 +221,7 @@ EXTAPI int context_history_list_move_next(context_history_list_h list)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_list_destroy(context_history_list_h list)
+SO_EXPORT int context_history_list_destroy(context_history_list_h list)
 {
 	ASSERT_NOT_NULL(list);
 
@@ -231,7 +230,7 @@ EXTAPI int context_history_list_destroy(context_history_list_h list)
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_record_get_int(context_history_record_h record, const char* key, int* val)
+SO_EXPORT int context_history_record_get_int(context_history_record_h record, const char* key, int* val)
 {
 	ASSERT_NOT_NULL(record && val && key);
 
@@ -248,7 +247,7 @@ EXTAPI int context_history_record_get_int(context_history_record_h record, const
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_record_get_string(context_history_record_h record, const char* key, char** val)
+SO_EXPORT int context_history_record_get_string(context_history_record_h record, const char* key, char** val)
 {
 	ASSERT_NOT_NULL(record && val && key);
 
@@ -269,7 +268,7 @@ EXTAPI int context_history_record_get_string(context_history_record_h record, co
 	return CONTEXT_HISTORY_ERROR_NONE;
 }
 
-EXTAPI int context_history_record_destroy(context_history_record_h record)
+SO_EXPORT int context_history_record_destroy(context_history_record_h record)
 {
 	ASSERT_NOT_NULL(record);
 	delete record;

@@ -1,12 +1,16 @@
 Name:       context
 Summary:    Tizen Context Framework Native API
-Version:    0.7.5
+Version:    0.8.0
 Release:    1
 Group:      Service/Context
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 
 %define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
+
+%if "%{?BUILD_PROFILE}" == "tv"
+ExcludeArch: %{arm} aarch64 %ix86 x86_64
+%endif
 
 BuildRequires: cmake
 BuildRequires: pkgconfig(libcontext-shared)
