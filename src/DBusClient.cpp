@@ -105,7 +105,7 @@ bool DBusClient::__init()
 	regId = g_dbus_connection_register_object(__connection, DBUS_PATH,
 			__nodeInfo->interfaces[0], &vtable, NULL, NULL, &gerr);
 	HANDLE_GERROR(gerr);
-	IF_FAIL_CATCH_TAG(regId>0, _E, "Object registration failed");
+	IF_FAIL_CATCH_TAG(regId > 0, _E, "Object registration failed");
 
 	_I("DBus connection established");
 	_D("DBus name: %s", g_dbus_connection_get_unique_name(__connection));
