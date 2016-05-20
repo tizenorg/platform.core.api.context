@@ -17,6 +17,7 @@
 //#include <sstream>
 //#include <iomanip>
 #include <Types.h>
+#include <DBusTypes.h>
 #include <Json.h>
 #include <app_control_internal.h>
 #include <bundle.h>
@@ -27,7 +28,6 @@
 #include <pkgmgr-info.h>
 #include "request_handler.h"
 #include "rule_validator.h"
-#include "priv_util.h"
 
 #define INITIAL_RULE "{ \"ID\" : -1, \"DESCRIPTION\" : \"\", \"DETAILS\" : {  } }"
 #define INITIAL_ENTRY "{ \"DATA_ARR\" : [ ] }"
@@ -352,11 +352,11 @@ SO_EXPORT int context_trigger_rule_set_action_app_control(context_trigger_rule_h
 	int error;
 
 	// Privilege check
-	error = ctx::privilege_util::is_allowed("appmanager.launch");
+	error = ctx::request_handler::call(METHOD_CHK_PRIV_APPLAUNCH);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 
 	if (is_call_operation(app_control)) {
-		error = ctx::privilege_util::is_allowed("call");
+		error = ctx::request_handler::call(METHOD_CHK_PRIV_CALL);
 		IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 	}
 
@@ -414,7 +414,7 @@ SO_EXPORT int context_trigger_rule_set_action_notification(context_trigger_rule_
 	ASSERT_NOT_NULL(rule && title && content);
 
 	// Privilege check
-	int error = ctx::privilege_util::is_allowed("notification");
+	int error = ctx::request_handler::call(METHOD_CHK_PRIV_NOTIFICATION);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 
 	// if action arleady exists

@@ -57,6 +57,8 @@ namespace ctx { namespace request_handler {
 	 */
 	int is_supported(const char* subject);
 
+	int call(const char* method);
+
 } }	/* namespace ctx::request_handler */
 
 #endif // __CONTEXT_LIB_REQUEST_HANDLER_H__

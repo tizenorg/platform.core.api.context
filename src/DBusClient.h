@@ -42,6 +42,8 @@ namespace ctx {
 		int write(std::string subject, Json inputData);
 		int write(std::string subject, Json inputData, Json *result);
 
+		int call(const char *method);
+
 	private:
 		static void __onMethodCalled(GDBusConnection *conn, const gchar *sender,
 				const gchar *path, const gchar *iface, const gchar *name,

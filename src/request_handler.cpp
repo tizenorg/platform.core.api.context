@@ -86,6 +86,11 @@ SO_EXPORT int ctx::request_handler::is_supported(const char* subject)
 	return __dbusClient.isSupported(subject);
 }
 
+SO_EXPORT int ctx::request_handler::call(const char* method)
+{
+	return __dbusClient.call(method);
+}
+
 SO_EXPORT bool ctx::request_handler::register_callback(const char* subject, subject_response_cb callback)
 {
 	__dbusListener.setCb(subject, callback);
