@@ -4,6 +4,7 @@ SET(TEST_EXEC context-test)
 
 # Source List
 FILE(GLOB_RECURSE TEST_SRCS src/*.cpp)
+SET(TEST_SRCS ${TEST_SRCS} ../src/DBusClient.cpp)
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/src
 )

@@ -18,7 +18,7 @@
 #include <Json.h>
 #include <context_history.h>
 #include <context_history_types_internal.h>
-#include "request_handler.h"
+#include "DBusClient.h"
 
 #define TYPE_INT 0
 #define TYPE_STRING 1
@@ -153,7 +153,9 @@ SO_EXPORT int context_history_get_list(context_history_h handle, context_history
 
 	int req_id;
 	ctx::Json tmp_list;
-	int err = ctx::request_handler::read_sync(data_type_str.c_str(), (filter)? &filter->jfilter : NULL, &req_id, &tmp_list);
+	ctx::DBusClient dbusClient;
+
+	int err = dbusClient.readSync(data_type_str, filter ? filter->jfilter : NULL, &req_id, &tmp_list);
 	IF_FAIL_RETURN_TAG(err == ERR_NONE, err, _E, "Getting list failed");
 
 	_J("Read response", tmp_list);

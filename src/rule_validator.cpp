@@ -20,7 +20,7 @@
 #include <Types.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
-#include "request_handler.h"
+#include "DBusClient.h"
 #include "rule_validator.h"
 
 #define KEY_TEMPLATE "templates"
@@ -72,7 +72,8 @@ int ctx::rule_validator::request_template(std::string name, bool mandatory)
 
 	int req_id;
 	ctx::Json tmpl;
-	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET_TEMPLATE, &request, &req_id, &tmpl);
+	ctx::DBusClient dbusClient;
+	int error = dbusClient.readSync(CONTEXT_TRIGGER_SUBJECT_GET_TEMPLATE, request, &req_id, &tmpl);
 	if (error == ERR_NOT_SUPPORTED) {
 		template_map.erase(name);
 		_E("Failed to get request: not supported");
