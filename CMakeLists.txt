@@ -10,7 +10,7 @@ FILE(GLOB_RECURSE SRCS src/*.cpp)
 MESSAGE("Sources: ${SRCS}")
 
 # Dependencies
-SET(DEPS "libcontext-shared aul bundle capi-appfw-app-control pkgmgr-info")
+SET(DEPS "gio-2.0 libcontext-shared aul bundle capi-appfw-app-control pkgmgr-info")
 
 # Common Options
 INCLUDE(FindPkgConfig)
@@ -19,6 +19,10 @@ INCLUDE_DIRECTORIES(
 )
 ADD_DEFINITIONS(-O2 -Wall -fPIC -fdata-sections -ffunction-sections -fvisibility=hidden)
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fPIC -Wl,--as-needed -Wl,--gc-section -Wl,--print-gc-section")
+
+IF(${LEGACY_APPFW})
+	ADD_DEFINITIONS(-DLEGACY_APPFW)
+ENDIF(${LEGACY_APPFW})
 
 # Building Library
 pkg_check_modules(api_pkg REQUIRED ${DEPS})

@@ -21,7 +21,11 @@
 #include <Json.h>
 #include <app_control_internal.h>
 #include <bundle.h>
+
+#ifndef LEGACY_APPFW
 #include <bundle_internal.h>
+#endif
+
 #include <context_trigger.h>
 #include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
@@ -374,7 +378,11 @@ SO_EXPORT int context_trigger_rule_set_action_app_control(context_trigger_rule_h
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get app id");
 
 	pkgmgrinfo_appinfo_h app_info;
+#ifdef LEGACY_APPFW
+	error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
+#else
 	error = pkgmgrinfo_appinfo_get_usr_appinfo(app_id, getuid(), &app_info);
+#endif
 	g_free(app_id);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
 
@@ -432,7 +440,11 @@ SO_EXPORT int context_trigger_rule_set_action_notification(context_trigger_rule_
 		IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to get app id");
 
 		pkgmgrinfo_appinfo_h app_info;
+#ifdef LEGACY_APPFW
+		error = pkgmgrinfo_appinfo_get_appinfo(app_id, &app_info);
+#else
 		error = pkgmgrinfo_appinfo_get_usr_appinfo(app_id, getuid(), &app_info);
+#endif
 		g_free(app_id);
 		IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "No such app");
 	}
@@ -540,7 +552,11 @@ SO_EXPORT int context_trigger_rule_custom_event_create(const char* event_item, c
 
 	// Err: Invalid provider
 	pkgmgrinfo_pkginfo_h pkg_info;
+#ifdef LEGACY_APPFW
+	int error = pkgmgrinfo_pkginfo_get_pkginfo(provider, &pkg_info);
+#else
 	int error = pkgmgrinfo_pkginfo_get_usr_pkginfo(provider, getuid(), &pkg_info);
+#endif
 	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_info);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "No such package");
 
@@ -617,7 +633,11 @@ SO_EXPORT int context_trigger_rule_custom_condition_create(const char* condition
 
 	// Err: Invalid provider
 	pkgmgrinfo_pkginfo_h pkg_info;
+#ifdef LEGACY_APPFW
+	int error = pkgmgrinfo_pkginfo_get_pkginfo(provider, &pkg_info);
+#else
 	int error = pkgmgrinfo_pkginfo_get_usr_pkginfo(provider, getuid(), &pkg_info);
+#endif
 	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_info);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "No such package");
 

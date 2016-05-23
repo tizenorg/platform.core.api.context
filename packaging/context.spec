@@ -8,11 +8,14 @@ Source0:    %{name}-%{version}.tar.gz
 
 %define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
 
+%define LEGACY_APPFW	0
+
 %if "%{?BUILD_PROFILE}" == "tv"
 ExcludeArch: %{arm} aarch64 %ix86 x86_64
 %endif
 
 BuildRequires: cmake
+BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(libcontext-shared)
 BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
@@ -39,7 +42,7 @@ export CXXFLAGS+=" -fno-strict-aliasing -fno-unroll-loops -fsigned-char -fstrict
 
 export   CFLAGS+=" -fno-common"
 export CXXFLAGS+=" -Wnon-virtual-dtor"
-export CXXFLAGS+=" -std=c++11 -Wno-c++11-compat"
+export CXXFLAGS+=" -std=c++0x"
 
 #export   CFLAGS+=" -Wcast-qual"
 #export CXXFLAGS+=" -Wcast-qual"
@@ -53,7 +56,9 @@ export   CFLAGS+=" -D_ALLOW_SERVICE_APP_TRIGGER_"
 export CXXFLAGS+=" -D_ALLOW_SERVICE_APP_TRIGGER_"
 %endif
 
-cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix} -DMAJORVER=${MAJORVER} -DFULLVER=%{version} -DPROFILE=%{?BUILD_PROFILE}
+cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix} -DMAJORVER=${MAJORVER} -DFULLVER=%{version} \
+							   -DPROFILE=%{?BUILD_PROFILE} \
+							   -DLEGACY_APPFW=%{LEGACY_APPFW}
 make %{?jobs:-j%jobs}
 
 %install
