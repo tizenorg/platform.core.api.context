@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <request_handler.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
 #include <context_history.h>
 
 #include "../shared.h"
+#include "request_handler.h"
 #include "condition.h"
 
 using namespace ctx::test;

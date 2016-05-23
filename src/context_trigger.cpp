@@ -17,6 +17,7 @@
 //#include <sstream>
 //#include <iomanip>
 #include <Types.h>
+#include <DBusTypes.h>
 #include <Json.h>
 #include <app_control_internal.h>
 #include <bundle.h>
@@ -25,15 +26,16 @@
 #include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
 #include <pkgmgr-info.h>
-#include "request_handler.h"
+#include "DBusClient.h"
 #include "rule_validator.h"
-#include "priv_util.h"
 
 #define INITIAL_RULE "{ \"ID\" : -1, \"DESCRIPTION\" : \"\", \"DETAILS\" : {  } }"
 #define INITIAL_ENTRY "{ \"DATA_ARR\" : [ ] }"
 #define INITIAL_REF "{ \"option\" : [ ], \"attributes\" : [ ] }"
 #define EVENT_DATA_KEY_PREFIX_STR std::string("?")
 //#define DOUBLE_PRECISION 2
+
+static ctx::DBusClient __dbusClient;
 
 static int context_trigger_rule_event_create_internal(const char* event_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry, bool is_custom = false);
 static int context_trigger_rule_condition_create_internal(const char* condition_item, context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry, bool is_custom = false);
@@ -86,7 +88,7 @@ SO_EXPORT int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id
 		return CONTEXT_TRIGGER_ERROR_INVALID_RULE;
 
 	ctx::Json jrule_id;
-	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_ADD, &(rule->jrule), &jrule_id);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_ADD, rule->jrule, &jrule_id);
 
 	if (error == ERR_NONE) {
 		jrule_id.get(NULL, CT_RULE_ID, rule_id);
@@ -105,7 +107,7 @@ SO_EXPORT int context_trigger_remove_rule(int rule_id)
 
 	ctx::Json jrule_id;
 	jrule_id.set(NULL, CT_RULE_ID, rule_id);
-	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_REMOVE, &jrule_id, NULL);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_REMOVE, jrule_id, NULL);
 
 	if (error == ERR_ALREADY_STARTED) {	// Rule is still enabled.
 		return CONTEXT_TRIGGER_ERROR_RULE_ENABLED;
@@ -127,7 +129,7 @@ SO_EXPORT int context_trigger_enable_rule(int rule_id)
 	jrule_id.set(NULL, CT_RULE_ID, rule_id);
 
 	int req_id;	// Useless in context_trigger
-	int error = ctx::request_handler::subscribe(CONTEXT_TRIGGER_SUBJECT_ENABLE, &jrule_id, &req_id, NULL);
+	int error = __dbusClient.subscribe(CONTEXT_TRIGGER_SUBJECT_ENABLE, jrule_id, &req_id, NULL);
 
 	if (error == ERR_NO_DATA) {
 		return CONTEXT_TRIGGER_ERROR_RULE_NOT_EXIST;
@@ -145,7 +147,7 @@ SO_EXPORT int context_trigger_disable_rule(int rule_id)
 
 	ctx::Json jrule_id;
 	jrule_id.set(NULL, CT_RULE_ID, rule_id);
-	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_DISABLE, &jrule_id, NULL);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_DISABLE, jrule_id, NULL);
 
 	if (error == ERR_NO_DATA) {
 		return CONTEXT_TRIGGER_ERROR_RULE_NOT_EXIST;
@@ -161,7 +163,7 @@ SO_EXPORT int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enab
 
 	int req_id;
 	ctx::Json data_read;
-	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET_RULE_IDS, NULL, &req_id, &data_read);
+	int error = __dbusClient.readSync(CONTEXT_TRIGGER_SUBJECT_GET_RULE_IDS, NULL, &req_id, &data_read);
 
 	if (error != ERR_NONE) {
 		return error;
@@ -212,7 +214,7 @@ SO_EXPORT int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h
 
 	int req_id;
 	ctx::Json data_read;
-	int error = ctx::request_handler::read_sync(CONTEXT_TRIGGER_SUBJECT_GET, &option, &req_id, &data_read);
+	int error = __dbusClient.readSync(CONTEXT_TRIGGER_SUBJECT_GET, option, &req_id, &data_read);
 
 	if (error == ERR_NO_DATA) {
 		return CONTEXT_TRIGGER_ERROR_RULE_NOT_EXIST;
@@ -352,11 +354,11 @@ SO_EXPORT int context_trigger_rule_set_action_app_control(context_trigger_rule_h
 	int error;
 
 	// Privilege check
-	error = ctx::privilege_util::is_allowed("appmanager.launch");
+	error = __dbusClient.call(METHOD_CHK_PRIV_APPLAUNCH);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 
 	if (is_call_operation(app_control)) {
-		error = ctx::privilege_util::is_allowed("call");
+		error = __dbusClient.call(METHOD_CHK_PRIV_CALL);
 		IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 	}
 
@@ -414,7 +416,7 @@ SO_EXPORT int context_trigger_rule_set_action_notification(context_trigger_rule_
 	ASSERT_NOT_NULL(rule && title && content);
 
 	// Privilege check
-	int error = ctx::privilege_util::is_allowed("notification");
+	int error = __dbusClient.call(METHOD_CHK_PRIV_NOTIFICATION);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Privilege checking failed (%#x)", error);
 
 	// if action arleady exists
@@ -582,7 +584,7 @@ SO_EXPORT int context_trigger_rule_event_is_supported(context_trigger_event_e ev
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
-	int error = ctx::request_handler::is_supported(eitem_str.c_str());
+	int error = __dbusClient.isSupported(eitem_str);
 
 	if (error == ERR_NONE)
 		*supported = true;
@@ -657,7 +659,7 @@ SO_EXPORT int context_trigger_rule_condition_is_supported(context_trigger_condit
 		return CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER;
 	}
 
-	int error = ctx::request_handler::is_supported(citem_str.c_str());
+	int error = __dbusClient.isSupported(citem_str);
 
 	if (error == ERR_NONE)
 		*supported = true;
@@ -929,7 +931,7 @@ SO_EXPORT int context_trigger_add_custom_item(const char* name, const char* attr
 	data.set(NULL, CT_CUSTOM_NAME, name);
 	data.set(NULL, CT_CUSTOM_ATTRIBUTES, jattr_template);
 
-	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_ADD, &data, NULL);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM_ADD, data, NULL);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to add custom item: %#x", error);
 
 	return error;
@@ -944,7 +946,7 @@ SO_EXPORT int context_trigger_remove_custom_item(const char* name)
 	data.set(NULL, CT_CUSTOM_NAME, name);
 
 	ctx::Json subj;
-	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_REMOVE, &data, &subj);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM_REMOVE, data, &subj);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to remove custom item: %#x", error);
 
 	std::string subject;
@@ -967,7 +969,7 @@ SO_EXPORT int context_trigger_publish_custom_item(const char* name, const char* 
 	data.set(NULL, CT_CUSTOM_NAME, name);
 	data.set(NULL, CT_CUSTOM_FACT, jfact);
 
-	int error = ctx::request_handler::write_with_reply(CONTEXT_TRIGGER_SUBJECT_CUSTOM_PUBLISH, &data, NULL);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM_PUBLISH, data, NULL);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to publish custom data");
 
 	return error;

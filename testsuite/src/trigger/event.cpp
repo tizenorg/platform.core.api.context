@@ -15,11 +15,11 @@
  */
 
 #include <time.h>
-#include <request_handler.h>
 #include <context_trigger.h>
 #include <context_trigger_types_internal.h>
 
 #include "../shared.h"
+#include "request_handler.h"
 #include "event.h"
 
 using namespace ctx::test;

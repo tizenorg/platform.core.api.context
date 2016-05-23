@@ -331,3 +331,24 @@ int DBusClient::write(std::string subject, Json inputData, Json *result)
 
 	return error;
 }
+
+int DBusClient::call(const char *method)
+{
+	int ret = ERR_NONE;
+	GError *err = NULL;
+
+	GVariant *response = g_dbus_connection_call_sync(__connection, DBUS_DEST, DBUS_PATH, DBUS_IFACE,
+			method, NULL, NULL, G_DBUS_CALL_FLAGS_NONE, DBUS_TIMEOUT, NULL, &err);
+
+	if (response) {
+		g_variant_unref(response);
+		return ERR_NONE;
+	}
+
+	ret = ERR_OPERATION_FAILED;
+	if (err->code == G_DBUS_ERROR_ACCESS_DENIED)
+		ret = ERR_PERMISSION_DENIED;
+
+	HANDLE_GERROR(err);
+	return ret;
+}
