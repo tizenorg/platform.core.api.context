@@ -346,7 +346,7 @@ bool ctx::rule_validator::set_ref_info(std::string type, ctx::Json* jref, std::s
 std::string ctx::rule_validator::get_data_type(std::string type, std::string name, std::string key)
 {
 	ctx::Json tmpl = get_template(name);
-	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, false);
+	IF_FAIL_RETURN(tmpl != EMPTY_JSON_OBJECT, "");
 
 	ctx::Json detailed_tmpl;
 	tmpl.get(NULL, type.c_str(), &detailed_tmpl);
