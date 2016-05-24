@@ -112,7 +112,11 @@ bool DBusClient::__init()
 	__nodeInfo = g_dbus_node_info_new_for_xml(__introspection, NULL);
 	IF_FAIL_RETURN_TAG(__nodeInfo != NULL, false, _E, "Initialization failed");
 
+#ifdef SYSTEM_SERVICE
+	addr = g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SYSTEM, NULL, &gerr);
+#else
 	addr = g_dbus_address_get_for_bus_sync(G_BUS_TYPE_SESSION, NULL, &gerr);
+#endif
 	HANDLE_GERROR(gerr);
 	IF_FAIL_CATCH_TAG(addr != NULL, _E, "Getting address failed");
 	_SD("Address: %s", addr);
