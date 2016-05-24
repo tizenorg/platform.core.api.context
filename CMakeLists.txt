@@ -12,6 +12,11 @@ MESSAGE("Sources: ${SRCS}")
 # Dependencies
 SET(DEPS "gio-2.0 libcontext-shared aul bundle capi-appfw-app-control pkgmgr-info")
 
+IF(${LEGACY_SECURITY})
+	SET(DEPS "${DEPS} security-server")
+	ADD_DEFINITIONS(-DLEGACY_SECURITY)
+ENDIF(${LEGACY_SECURITY})
+
 # Common Options
 INCLUDE(FindPkgConfig)
 INCLUDE_DIRECTORIES(

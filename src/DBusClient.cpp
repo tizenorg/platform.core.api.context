@@ -19,6 +19,32 @@
 #include <ScopeMutex.h>
 #include "DBusClient.h"
 
+#ifdef LEGACY_SECURITY
+#include <security-server.h>
+
+static const char* __getCookie()
+{
+	static char *cookie = NULL;
+	static GMutex cookieMutex;
+
+	ctx::ScopeMutex sm(&cookieMutex);
+
+	if (cookie == NULL) {
+		int rawSize = security_server_get_cookie_size();
+		IF_FAIL_RETURN_TAG(rawSize > 0, NULL, _E, "Invalid cookie size");
+
+		char rawCookie[rawSize];
+		int ret = security_server_request_cookie(rawCookie, rawSize);
+		IF_FAIL_RETURN_TAG(ret >= 0, NULL, _E, "Failed to get the security cookie");
+
+		cookie = g_base64_encode(reinterpret_cast<guchar*>(rawCookie), rawSize);
+		IF_FAIL_RETURN_TAG(cookie, NULL, _E, "Failed to encode the cookie");
+	}
+
+	return cookie;
+}
+#endif
+
 using namespace ctx;
 
 static const gchar __introspection[] =
@@ -176,9 +202,13 @@ int DBusClient::__request(int type, int reqId, const char* subject, const char* 
 	if (input == NULL)
 		input = EMPTY_JSON_OBJECT;
 
-	/* FIXME: the second param is the security cookie, which is deprected in 3.0.
-	 * We need to completely REMOVE this parameter from the dbus protocol. */
+#ifdef LEGACY_SECURITY
+	const char *cookie = __getCookie();
+	IF_FAIL_RETURN_TAG(cookie, ERR_OPERATION_FAILED, _E, "Cookie generation failed");
+	GVariant *param = g_variant_new("(isiss)", type, cookie, reqId, subject, input);
+#else
 	GVariant *param = g_variant_new("(isiss)", type, "", reqId, subject, input);
+#endif
 	IF_FAIL_RETURN_TAG(param, ERR_OUT_OF_MEMORY, _E, "Memory allocation failed");
 
 	GError *err = NULL;
