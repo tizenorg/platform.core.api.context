@@ -30,7 +30,7 @@
 #include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
 #include <pkgmgr-info.h>
-#include "DBusClient.h"
+#include <DBusClient.h>
 #include "rule_validator.h"
 
 #define INITIAL_RULE "{ \"ID\" : -1, \"DESCRIPTION\" : \"\", \"DETAILS\" : {  } }"

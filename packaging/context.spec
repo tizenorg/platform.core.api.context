@@ -9,7 +9,6 @@ Source0:    %{name}-%{version}.tar.gz
 %define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
 
 %define SYSTEM_SERVICE	0
-%define LEGACY_SECURITY	0
 %define LEGACY_APPFW	0
 
 %if "%{?BUILD_PROFILE}" == "tv"
@@ -23,10 +22,6 @@ BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
 BuildRequires: pkgconfig(pkgmgr-info)
-
-%if %{LEGACY_SECURITY}
-BuildRequires: pkgconfig(security-server)
-%endif
 
 %description
 Tizen Context Framework Native API
@@ -65,7 +60,6 @@ export CXXFLAGS+=" -D_ALLOW_SERVICE_APP_TRIGGER_"
 cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix} -DMAJORVER=${MAJORVER} -DFULLVER=%{version} \
 							   -DPROFILE=%{?BUILD_PROFILE} \
 							   -DSYSTEM_SERVICE=%{SYSTEM_SERVICE} \
-							   -DLEGACY_SECURITY=%{LEGACY_SECURITY} \
 							   -DLEGACY_APPFW=%{LEGACY_APPFW}
 make %{?jobs:-j%jobs}
 

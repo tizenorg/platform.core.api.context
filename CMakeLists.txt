@@ -12,11 +12,6 @@ MESSAGE("Sources: ${SRCS}")
 # Dependencies
 SET(DEPS "gio-2.0 context-common aul bundle capi-appfw-app-control pkgmgr-info")
 
-IF(${LEGACY_SECURITY})
-	SET(DEPS "${DEPS} security-server")
-	ADD_DEFINITIONS(-DLEGACY_SECURITY)
-ENDIF(${LEGACY_SECURITY})
-
 IF(${SYSTEM_SERVICE})
 	ADD_DEFINITIONS(-DSYSTEM_SERVICE)
 ENDIF(${SYSTEM_SERVICE})
