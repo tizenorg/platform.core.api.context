@@ -10,7 +10,7 @@ FILE(GLOB_RECURSE SRCS src/*.cpp)
 MESSAGE("Sources: ${SRCS}")
 
 # Dependencies
-SET(DEPS "gio-2.0 libcontext-shared aul bundle capi-appfw-app-control pkgmgr-info")
+SET(DEPS "gio-2.0 context-common aul bundle capi-appfw-app-control pkgmgr-info")
 
 IF(${LEGACY_SECURITY})
 	SET(DEPS "${DEPS} security-server")

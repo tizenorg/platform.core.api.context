@@ -18,7 +18,7 @@ ExcludeArch: %{arm} aarch64 %ix86 x86_64
 
 BuildRequires: cmake
 BuildRequires: pkgconfig(gio-2.0)
-BuildRequires: pkgconfig(libcontext-shared)
+BuildRequires: pkgconfig(context-common)
 BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-appfw-app-control)
