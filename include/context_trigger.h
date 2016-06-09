@@ -547,8 +547,8 @@ typedef enum {
 	CONTEXT_TRIGGER_ERROR_RULE_NOT_ENABLED	= (TIZEN_ERROR_CONTEXT | 0X06),			/**< Rule is not enabled */
 	CONTEXT_TRIGGER_ERROR_INVALID_RULE		= (TIZEN_ERROR_CONTEXT | 0X07),			/**< Invalid rule */
 	CONTEXT_TRIGGER_ERROR_RULE_NOT_EXIST	= (TIZEN_ERROR_CONTEXT | 0X08),			/**< Rule does not exist */
-	CONTEXT_TRIGGER_ERROR_INVALID_DATA		= CONTEXT_TRIGGER_ERROR_INVALID_RULE,	/**< Invalid data */
-	CONTEXT_TRIGGER_ERROR_DATA_EXIST		= (TIZEN_ERROR_CONTEXT | 0X09),			/**< Data exist */
+	CONTEXT_TRIGGER_ERROR_DATA_EXIST		= (TIZEN_ERROR_CONTEXT | 0X09),			/**< Data exist (Since 3.0) */
+	CONTEXT_TRIGGER_ERROR_INVALID_DATA		= (TIZEN_ERROR_CONTEXT | 0X0a),			/**< Invalid data (Since 3.0) */
 } context_trigger_error_e;
 
 /**
@@ -619,7 +619,7 @@ typedef struct _context_trigger_rule_entry_s* context_trigger_rule_entry_h;
 /**
  * @brief		Registers a rule.
  * @details		Using this, applications can register a rule and get the ID of the registered rule.@n
- *				A rule only can be enabled, disabled, or removed by the application that has registered the rule.
+ *				A rule can only be enabled, disabled, or removed by the application that has registered the rule.
  * @since_tizen 2.4
  *
  * @remarks		When registering a new rule, regarding the event and condition items used to compose the rule,
@@ -627,7 +627,7 @@ typedef struct _context_trigger_rule_entry_s* context_trigger_rule_entry_h;
  *				For details, see context_trigger_rule_event_create() and context_trigger_rule_condition_create().
  *
  * @param[in]	rule		The rule to register
- * @param[out]	rule_id		The ID assigned to the @c rule
+ * @param[out]	rule_id		The ID assigned to the @a rule
  *
  * @return		0 on success, otherwise a negative error value
  * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
@@ -644,7 +644,7 @@ int context_trigger_add_rule(context_trigger_rule_h rule, int* rule_id);
 
 /**
  * @brief		Removes a rule.
- * @details		This removes the rule designated by the @c rule_id, which is owned by the application.
+ * @details		This removes the rule designated by the @a rule_id, which is owned by the application.
  * @since_tizen 2.4
  *
  * @remarks		If the rule has been activated, it should be disabled through context_trigger_disable_rule() in advance.
@@ -665,7 +665,7 @@ int context_trigger_remove_rule(int rule_id);
 
 /**
  * @brief		Enables a rule.
- * @details		This activates the rule designated by the @c rule_id, which is owned by the application.
+ * @details		This activates the rule designated by the @a rule_id, which is owned by the application.
  * @since_tizen 2.4
  *
  * @param[in]	rule_id		The ID of the rule to be enabled
@@ -685,7 +685,7 @@ int context_trigger_enable_rule(int rule_id);
 
 /**
  * @brief		Disables a rule.
- * @details		This deactivates the rule designated by the @c rule_id, which is owned by the application.
+ * @details		This deactivates the rule designated by the @a rule_id, which is owned by the application.
  * @since_tizen 2.4
  *
  * @param[in]	rule_id		The ID of the rule to be disabled
@@ -706,7 +706,7 @@ int context_trigger_disable_rule(int rule_id);
  * @brief		Gets the IDs of the rules owned by the current application.
  * @since_tizen 2.4
  *
- * @remarks		The arrays @c enabled_rule_ids and @c disabled_rule_ids must be released using @c free().
+ * @remarks		The arrays @a enabled_rule_ids and @a disabled_rule_ids must be released using @c free().
  *
  * @param[out]	enabled_rule_ids	The IDs of the active rules
  * @param[out]	enabled_rule_count	The number of the active rules
@@ -726,7 +726,7 @@ int context_trigger_get_own_rule_ids(int** enabled_rule_ids, int* enabled_rule_c
  * @brief		Gets a rule stored in the system by rule ID.
  * @since_tizen 2.4
  *
- * @remarks		The @c rule must be released using context_trigger_rule_destroy().
+ * @remarks		The @a rule must be released using context_trigger_rule_destroy().
  *
  * @param[in]	rule_id		The ID of the rule to be retrieved
  * @param[out]	rule		The rule retrieved
@@ -750,7 +750,7 @@ int context_trigger_get_rule_by_id(int rule_id, context_trigger_rule_h* rule);
  *				the rule can be satisfied if at least one is true.
  * @since_tizen 2.4
  *
- * @remarks		The @c rule must be released using context_trigger_rule_destroy().
+ * @remarks		The @a rule must be released using context_trigger_rule_destroy().
  *
  * @param[in]	logical_type	The logical operator
  * @param[out]	rule			The rule handle to be initialized
@@ -833,7 +833,7 @@ int context_trigger_rule_set_action_app_control(context_trigger_rule_h rule, app
  * @privlevel	public
  * @privilege	http://tizen.org/privilege/notification
  *
- * @remarks		The @c app_control can be @c NULL. In that case, no application will be launched via the notification.
+ * @remarks		The @a app_control can be @c NULL. In that case, no application will be launched via the notification.
  *
  * @param[in]	rule			The rule
  * @param[in]	title			The title text
@@ -872,7 +872,7 @@ int context_trigger_rule_set_description(context_trigger_rule_h rule, const char
  * @brief		Gets the description of a rule.
  * @since_tizen 2.4
  *
- * @remarks		The @c description must be released using @c free().
+ * @remarks		The @a description must be released using @c free().
  *
  * @param[in]	rule			The rule
  * @param[out]	description		The description of the rule
@@ -892,7 +892,7 @@ int context_trigger_rule_get_description(context_trigger_rule_h rule, char** des
  * @details		An event of a contextual event item, which will be monitored by the system, is created.
  * @since_tizen 2.4
  *
- * @remarks		Regarding the @c event_item, the application may require one of the following privileges:@n
+ * @remarks		Regarding the @a event_item, the application may require one of the following privileges:@n
  *				http://tizen.org/privilege/alarm.set @n
  *				http://tizen.org/privilege/network.get @n
  *				http://tizen.org/privilege/telephony @n
@@ -902,7 +902,7 @@ int context_trigger_rule_get_description(context_trigger_rule_h rule, char** des
  *				If the application does not have necessary privilege, when registering the corresponding rule,
  *				context_trigger_add_rule() will return #CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED.
  *				See #context_trigger_event_e to find the corresponding privilege of each event item.@n
- *				The @c entry must be released using context_trigger_rule_entry_destroy().
+ *				The @a entry must be released using context_trigger_rule_entry_destroy().
  *
  * @param[in]	event_item		The contextual event item
  * @param[in]	logical_type	The logical operator
@@ -937,7 +937,7 @@ int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, 
  * @details		A condition of a contextual condition item is created.
  * @since_tizen 2.4
  *
- * @remarks		Regarding the @c condition_item, the application may require one of the following privileges:@n
+ * @remarks		Regarding the @a condition_item, the application may require one of the following privileges:@n
  *				http://tizen.org/privilege/network.get @n
  *				http://tizen.org/privilege/telephony @n
  *				http://tizen.org/privilege/apphistory.read @n
@@ -946,7 +946,7 @@ int context_trigger_rule_event_is_supported(context_trigger_event_e event_item, 
  *				If the application does not have necessary privilege, when registering the corresponding rule,
  *				context_trigger_add_rule() will return #CONTEXT_TRIGGER_ERROR_PERMISSION_DENIED.
  *				See #context_trigger_condition_e to find the corresponding privilege of each condition item.@n
- *				The @c entry must be released using context_trigger_rule_entry_destroy().
+ *				The @a entry must be released using context_trigger_rule_entry_destroy().
  *
  * @param[in]	condition_item	The contextual condition item
  * @param[in]	logical_type	The logical operator
@@ -1147,6 +1147,113 @@ int context_trigger_rule_entry_add_comparison_string(context_trigger_rule_entry_
  * @see			context_trigger_rule_entry_add_comparison_string()
  */
 int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry, const char* key, const char* comp_operator, const char* event_data_key);
+
+/**
+ * @brief		Adds custom event/condition item with its template.
+ * @details		Using this, applications can define an event/condition and provide their own contextual data
+ *				in addition to predefined #context_trigger_event_e/#context_trigger_condition_e.
+ *				See the programming guide to find json schema for @a attr_template.
+ * @since_tizen 3.0
+ *
+ * @param[in]	name			The name of custom event/condition item to register
+ * @param[in]	attr_template	The attribute template which explains contextual data schema in json format
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_DATA_EXIST			Data exist
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_DATA			Invalid data
+ *
+ * @see			context_trigger_custom_unregister()
+ */
+int context_trigger_custom_register(const char* name, const char* attr_template);
+
+/**
+ * @brief		Removes custom event/condition item.
+ * @since_tizen 3.0
+ *
+ * @remarks		A custom event/condition item can only be removed by the application that registered it.
+ *
+ * @param[in]	name			The name of custom item to be removed
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event/condition item
+ *
+ * @see			context_trigger_custom_register()
+ */
+int context_trigger_custom_unregister(const char* name);
+
+/**
+ * @brief		Publishes custom event/condition data.
+ * @details		Using this, applications can provide their own contextual data to context trigger.
+ *				See the programming guide to find json schema for @a fact.
+ * @since_tizen 3.0
+ *
+ * @remarks		Corresponding contextual data can only be published by the application that registered it.
+ *
+ * @param[in]	name			The name of custom item to provide data
+ * @param[in]	fact			The contextual data to be provided in json format
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event/condition contained
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_DATA			Invalid data
+ */
+int context_trigger_custom_publish(const char* name, const char* fact);
+
+/**
+ * @brief		Creates an event entry with custom event, instead of predefined event item #context_trigger_event_e.
+ * @details		An event of a custom contextual event item, which is registered and will be provided by an application/system, is created.
+ * @since_tizen 3.0
+ *
+ * @remarks		The @a entry must be released using context_trigger_rule_entry_destroy().
+ *
+ * @param[in]	event_item		The custom contextual event item
+ * @param[in]	provider		The id of the package which provides the event item
+ * @param[in]	logical_type	The logical operator
+ * @param[out]	entry			The event entry to be initialized
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event contained
+ *
+ * @see			context_trigger_rule_event_create()
+ * @see			context_trigger_rule_entry_destroy()
+ */
+int context_trigger_rule_custom_event_create(const char* event_item, const char* provider,
+		context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry);
+
+/**
+ * @brief		Creates a condition entry with custom condition, instead of predefined condition item #context_trigger_condition_e.
+ * @details		A condition of a custom contextual condition item, which is registered and will be provided by provider application/system is created.
+ * @since_tizen 3.0
+ *
+ * @remarks		The @a entry must be released using context_trigger_rule_entry_destroy().
+ *
+ * @param[in]	condition_item	The custom contextual condition item
+ * @param[in]	provider		The id of the package which provides the condition item
+ * @param[in]	logical_type	The logical operator
+ * @param[out]	entry			The condition entry to be initialized
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported condition contained
+ *
+ * @see			context_trigger_rule_condition_create()
+ * @see			context_trigger_rule_entry_destroy()
+ */
+int context_trigger_rule_custom_condition_create(const char* condition_item, const char* provider,
+		context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry);
 
 #ifdef __cplusplus
 }
