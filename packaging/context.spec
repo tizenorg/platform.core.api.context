@@ -1,6 +1,6 @@
 Name:       context
 Summary:    Tizen Context Framework Native API
-Version:    0.9.0
+Version:    0.9.1
 Release:    1
 Group:      Service/Context
 License:    Apache-2.0
