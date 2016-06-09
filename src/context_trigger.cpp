@@ -46,6 +46,8 @@ static int context_trigger_rule_condition_create_internal(const char* condition_
 static std::string convert_event_to_string(context_trigger_event_e item);
 static std::string convert_condition_to_string(context_trigger_condition_e item);
 static std::string convert_logical_type_to_string(context_trigger_logical_type_e logical_type);
+static std::string get_custom_item_subject(const char* provider, const char* item);
+
 //static std::string int_to_string(int value);
 //static std::string double_to_string(int value);
 
@@ -560,7 +562,7 @@ SO_EXPORT int context_trigger_rule_custom_event_create(const char* event_item, c
 	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_info);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "No such package");
 
-	std::string subject = provider + CT_CUSTOM_DELIMITER + event_item;
+	std::string subject = get_custom_item_subject(provider, event_item);
 	error = context_trigger_rule_event_create_internal(subject.c_str(), logical_type, entry, true);
 
 	return error;
@@ -641,7 +643,7 @@ SO_EXPORT int context_trigger_rule_custom_condition_create(const char* condition
 	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_info);
 	IF_FAIL_RETURN_TAG(error == PMINFO_R_OK, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "No such package");
 
-	std::string subject = provider + CT_CUSTOM_DELIMITER + condition_item;
+	std::string subject = get_custom_item_subject(provider, condition_item);
 	error = context_trigger_rule_condition_create_internal(subject.c_str(), logical_type, entry, true);
 	return error;
 }
@@ -948,10 +950,11 @@ SO_EXPORT int context_trigger_add_custom_item(const char* name, const char* attr
 	IF_FAIL_RETURN_TAG(ret, CONTEXT_TRIGGER_ERROR_INVALID_DATA, _E, "Invalid template");
 
 	ctx::Json data;
+	data.set(NULL, CT_CUSTOM_REQ, CT_CUSTOM_ADD);
 	data.set(NULL, CT_CUSTOM_NAME, name);
 	data.set(NULL, CT_CUSTOM_ATTRIBUTES, jattr_template);
 
-	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM_ADD, data, NULL);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM, data, NULL);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to add custom item: %#x", error);
 
 	return error;
@@ -963,10 +966,11 @@ SO_EXPORT int context_trigger_remove_custom_item(const char* name)
 	ASSERT_NOT_NULL(name);
 
 	ctx::Json data;
+	data.set(NULL, CT_CUSTOM_REQ, CT_CUSTOM_REMOVE);
 	data.set(NULL, CT_CUSTOM_NAME, name);
 
 	ctx::Json subj;
-	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM_REMOVE, data, &subj);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM, data, &subj);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to remove custom item: %#x", error);
 
 	std::string subject;
@@ -986,10 +990,11 @@ SO_EXPORT int context_trigger_publish_custom_item(const char* name, const char* 
 	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact Json");
 
 	ctx::Json data;
+	data.set(NULL, CT_CUSTOM_REQ, CT_CUSTOM_PUBLISH);
 	data.set(NULL, CT_CUSTOM_NAME, name);
 	data.set(NULL, CT_CUSTOM_FACT, jfact);
 
-	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM_PUBLISH, data, NULL);
+	int error = __dbusClient.write(CONTEXT_TRIGGER_SUBJECT_CUSTOM, data, NULL);
 	IF_FAIL_RETURN_TAG(error == ERR_NONE, error, _E, "Failed to publish custom data");
 
 	return error;
@@ -1119,6 +1124,12 @@ std::string convert_logical_type_to_string(context_trigger_logical_type_e logica
 		break;
 	}
 	return str;
+}
+
+std::string get_custom_item_subject(const char* provider, const char* item)
+{
+	std::string subject_name = CT_CUSTOM + std::string("/") + provider + std::string("/") + item;
+	return subject_name;
 }
 
 /*
