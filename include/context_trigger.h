@@ -547,8 +547,8 @@ typedef enum {
 	CONTEXT_TRIGGER_ERROR_RULE_NOT_ENABLED	= (TIZEN_ERROR_CONTEXT | 0X06),			/**< Rule is not enabled */
 	CONTEXT_TRIGGER_ERROR_INVALID_RULE		= (TIZEN_ERROR_CONTEXT | 0X07),			/**< Invalid rule */
 	CONTEXT_TRIGGER_ERROR_RULE_NOT_EXIST	= (TIZEN_ERROR_CONTEXT | 0X08),			/**< Rule does not exist */
-	CONTEXT_TRIGGER_ERROR_INVALID_DATA		= CONTEXT_TRIGGER_ERROR_INVALID_RULE,	/**< Invalid data */
 	CONTEXT_TRIGGER_ERROR_DATA_EXIST		= (TIZEN_ERROR_CONTEXT | 0X09),			/**< Data exist */
+	CONTEXT_TRIGGER_ERROR_INVALID_DATA		= (TIZEN_ERROR_CONTEXT | 0X0a),			/**< Invalid data */
 } context_trigger_error_e;
 
 /**
@@ -1147,6 +1147,111 @@ int context_trigger_rule_entry_add_comparison_string(context_trigger_rule_entry_
  * @see			context_trigger_rule_entry_add_comparison_string()
  */
 int context_trigger_rule_entry_add_comparison(context_trigger_rule_entry_h entry, const char* key, const char* comp_operator, const char* event_data_key);
+
+/**
+ * @brief		Add custom event/condition item with its template.
+ * @details		Using this, applications can define an/a event/condition and provide its own contextual data besides predefined events/conditions.
+ *				See the programming guide to find json schema for @c attr_template.
+ * @since_tizen 3.0
+ *
+ * @param[in]	name			The name of custom event/condition item to register
+ * @param[in]	attr_template	The attribute template which explains contextual data schema in json format
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Out of memory
+ * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_DATA_EXIST			Data exist
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_DATA			Invalid data
+ *
+ * @see			context_trigger_remove_custom_item()
+ */
+int context_trigger_add_custom_item(const char* name, const char* attr_template);
+
+/**
+ * @brief		Remove custom event/condition item.
+ * @since_tizen 3.0
+ *
+ * @remarks		A custom event/condition item only can be removed by the application that has registered the item.
+ *
+ * @param[in]	name			The name of custom item to be removed
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OPERATION_FAILED		Operation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event/condition item
+ *
+ * @see			context_trigger_add_custom_item()
+ */
+int context_trigger_remove_custom_item(const char* name);
+
+/**
+ * @brief		Publish custom event/condition data.
+ * @details		Using this, applications can provide its own contextual data to context trigger.
+ *				See the programming guide to find json schema for @c fact.
+ * @since_tizen 3.0
+ *
+ * @remarks		Corresponding contextual data only can be published by the application that has registered the item.
+ *
+ * @param[in]	name			The name of custom item to provide data
+ * @param[in]	fact			The contextual data to be provided in json format
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event/condition contained
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_DATA			Invalid data
+ */
+int context_trigger_publish_custom_item(const char* name, const char* fact);
+
+/**
+ * @brief		Creates an event entry which uses custom event besides predefined event items.
+ * @details		An event of a contextual event item, which will be provided by an application/system, is created.
+ * @since_tizen 3.0
+ *
+ * @remarks		The @c entry must be released using context_trigger_rule_entry_destroy().
+ *
+ * @param[in]	event_item		The custom contextual event item
+ * @param[in]	provider		The id of the package which provides the event item
+ * @param[in]	logical_type	The logical operator
+ * @param[out]	entry			The event entry to be initialized
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported event contained
+ *
+ * @see			context_trigger_rule_entry_destroy()
+ */
+int context_trigger_rule_custom_event_create(const char* event_item, const char* provider,
+		context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry);
+
+/**
+ * @brief		Creates a condition entry which uses custom condition besides predefined condition items.
+ * @details		A condition of a contextual condition item, which will be provided by an application/system is created.
+ * @since_tizen 3.0
+ *
+ * @remarks		The @c entry must be released using context_trigger_rule_entry_destroy().
+ *
+ * @param[in]	condition_item	The custom contextual condition item
+ * @param[in]	provider		The id of the package which provides the condition item
+ * @param[in]	logical_type	The logical operator
+ * @param[out]	entry			The condition entry to be initialized
+ *
+ * @return		0 on success, otherwise a negative error value
+ * @retval		#CONTEXT_TRIGGER_ERROR_NONE					Successful
+ * @retval		#CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER	Invalid parameter
+ * @retval		#CONTEXT_TRIGGER_ERROR_OUT_OF_MEMORY		Memory allocation failed
+ * @retval		#CONTEXT_TRIGGER_ERROR_NOT_SUPPORTED		Unsupported condition contained
+ *
+
+ * @see			context_trigger_rule_entry_destroy()
+ */
+int context_trigger_rule_custom_condition_create(const char* condition_item, const char* provider,
+		context_trigger_logical_type_e logical_type, context_trigger_rule_entry_h* entry);
 
 #ifdef __cplusplus
 }
