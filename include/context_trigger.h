@@ -1189,7 +1189,7 @@ int context_trigger_custom_register(const char* name, const char* attr_template)
 int context_trigger_custom_unregister(const char* name);
 
 /**
- * @brief		Publishes an instance of a defined custom contextual data.i
+ * @brief		Publishes an instance of a defined custom contextual data.
  * @details		Using this, an application can publish the latest value of a custom data defined by the same application.
  *				The published data instance triggers the evaluation process of the trigger rules that use the data in their event part.
  *				If a rule uses the custom data as a condition, the last known value is referenced.
