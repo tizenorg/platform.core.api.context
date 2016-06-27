@@ -987,7 +987,7 @@ SO_EXPORT int context_trigger_custom_publish(const char* name, const char* fact)
 
 	// Err: Invalid Json
 	ctx::Json jfact = fact;
-	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact Json");
+	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER, _E, "Cannot parse fact Json");
 
 	ctx::Json data;
 	data.set(NULL, CT_CUSTOM_REQ, CT_CUSTOM_PUBLISH);
