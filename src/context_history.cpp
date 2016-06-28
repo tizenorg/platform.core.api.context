@@ -15,10 +15,11 @@
  */
 
 #include <map>
+#include <Types.h>
 #include <Json.h>
+#include <DBusClient.h>
 #include <context_history.h>
 #include <context_history_types_internal.h>
-#include <DBusClient.h>
 
 #define TYPE_INT 0
 #define TYPE_STRING 1

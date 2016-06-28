@@ -19,6 +19,7 @@
 #include <Types.h>
 #include <DBusTypes.h>
 #include <Json.h>
+#include <DBusClient.h>
 #include <app_control_internal.h>
 #include <bundle.h>
 
@@ -30,7 +31,6 @@
 #include <context_trigger_internal.h>
 #include <context_trigger_types_internal.h>
 #include <pkgmgr-info.h>
-#include <DBusClient.h>
 #include "rule_validator.h"
 
 #define INITIAL_RULE "{ \"ID\" : -1, \"DESCRIPTION\" : \"\", \"DETAILS\" : {  } }"
@@ -987,7 +987,7 @@ SO_EXPORT int context_trigger_custom_publish(const char* name, const char* fact)
 
 	// Err: Invalid Json
 	ctx::Json jfact = fact;
-	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_RULE, _E, "Cannot parse fact Json");
+	IF_FAIL_RETURN_TAG(jfact.valid(), CONTEXT_TRIGGER_ERROR_INVALID_PARAMETER, _E, "Cannot parse fact Json");
 
 	ctx::Json data;
 	data.set(NULL, CT_CUSTOM_REQ, CT_CUSTOM_PUBLISH);
