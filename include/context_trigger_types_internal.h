@@ -108,9 +108,9 @@
 #define CT_CUSTOM_TYPE "type"
 #define CT_CUSTOM_INT "integer"
 #define CT_CUSTOM_STRING "string"
-#define CT_CUSTOM_MIN "min"
-#define CT_CUSTOM_MAX "max"
-#define CT_CUSTOM_VALUES "values"
+#define CT_CUSTOM_ENUM "enum"
+#define CT_CUSTOM_MIN "minimum"
+#define CT_CUSTOM_MAX "maximum"
 #define CT_CUSTOM_SUBJECT "subject"
 
 #define TYPE_EVENT 1
@@ -118,6 +118,7 @@
 
 #define TYPE_INT_STR "integer"
 #define TYPE_STRING_STR "string"
+#define TYPE_ENUM_STR "enum"
 #define TYPE_DOUBLE_STR "double"
 
 #define TYPE_OPTION_STR "options"

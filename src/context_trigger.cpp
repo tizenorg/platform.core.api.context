@@ -876,7 +876,7 @@ SO_EXPORT int context_trigger_rule_entry_add_comparison(context_trigger_rule_ent
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 
 	// Err: Invalid operator
-	std::string type = ctx::rule_validator::get_data_type(TYPE_ATTR_STR, name, key);
+	std::string type = ctx::rule_validator::get_data_type_from_template(TYPE_ATTR_STR, name, key);
 	ret = ctx::rule_validator::is_valid_operator(type, op);
 	IF_FAIL_RETURN(ret, CONTEXT_TRIGGER_ERROR_INVALID_RULE);
 

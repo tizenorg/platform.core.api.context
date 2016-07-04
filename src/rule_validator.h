@@ -33,7 +33,7 @@ namespace ctx {
 		bool check_valid_key(std::string type, std::string name, std::string key);
 
 		bool set_ref_info(std::string type, ctx::Json *jref, std::string name, std::string key, std::string ref_key);
-		std::string get_data_type(std::string type, std::string name, std::string key);
+		std::string get_data_type_from_template(std::string type, std::string name, std::string key);
 		bool check_referential_data(std::string name, ctx::Json &ref_info);
 		bool is_valid_operator(std::string type, std::string op);
 
