@@ -197,7 +197,7 @@ bool ctx::rule_validator::check_option_string(std::string name, std::string key,
 	}
 
 	//   b. normal case
-	bool ret;
+	bool ret = false;
 	if (t_type == TYPE_STRING_STR) {
 		ret = check_value_string(opt_tmpl, key, value);
 	} else if (t_type == TYPE_ENUM_STR) {
