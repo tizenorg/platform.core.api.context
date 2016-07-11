@@ -21,7 +21,7 @@ INCLUDE(FindPkgConfig)
 INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/include
 )
-ADD_DEFINITIONS(-O2 -Wall -fPIC -fdata-sections -ffunction-sections -fvisibility=hidden)
+ADD_DEFINITIONS(-O2 -Wall -fPIC -fdata-sections -ffunction-sections -fvisibility=hidden -fprofile-arcs -ftest-coverage)
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fPIC -Wl,--as-needed -Wl,--gc-section -Wl,--print-gc-section")
 
 IF(${LEGACY_APPFW})

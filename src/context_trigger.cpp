@@ -480,7 +480,7 @@ SO_EXPORT int context_trigger_rule_set_action_notification(context_trigger_rule_
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
-
+//LCOV_EXCL_START
 SO_EXPORT int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h rule,
 		const char *bus_name, const char *object_path, const char *interface_name, const char *method_name, GVariant *param)
 {
@@ -506,7 +506,7 @@ SO_EXPORT int context_trigger_rule_set_action_dbus_call(context_trigger_rule_h r
 
 	return CONTEXT_TRIGGER_ERROR_NONE;
 }
-
+//LCOV_EXCL_STOP
 // Set description
 SO_EXPORT int context_trigger_rule_set_description(context_trigger_rule_h rule, const char* description)
 {
