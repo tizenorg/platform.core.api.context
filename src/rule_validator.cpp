@@ -475,10 +475,10 @@ bool check_template_int(ctx::Json& elem)
 	std::list<std::string> elem_keys;
 	elem.getKeys(&elem_keys);
 
-	bool min;
-	bool max;
-	int min_val;
-	int max_val;
+	bool min = false;
+	bool max = false;
+	int min_val = 0;
+	int max_val = 0;
 
 	for (std::list<std::string>::iterator it2 = elem_keys.begin(); it2 != elem_keys.end(); it2++) {
 		std::string elem_key = *it2;
